@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Anantayot Intharaphong</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Kanit -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -43,9 +40,8 @@
         .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="antialiased selection:bg-cyan selection:text-navy">
+<body class="antialiased selection:bg-cyan selection:text-navy overflow-hidden">
 
-    <!-- SKELETON LOADER SCREEN -->
     <div id="skeleton-screen" class="fixed inset-0 z-[100] bg-navy flex flex-col justify-center items-center px-6 transition-opacity duration-700">
         <div class="max-w-4xl w-full space-y-8 animate-pulse">
             <div class="h-6 bg-lightNavy rounded-md w-1/4 mb-12"></div>
@@ -67,15 +63,12 @@
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div id="main-content" class="opacity-0 transition-opacity duration-1000 relative">
         
-        <!-- Ambient Backgrounds -->
         <div class="absolute top-20 left-[-10%] w-96 h-96 bg-cyan/5 rounded-full blur-3xl animate-blob"></div>
         <div class="absolute top-[40%] right-[-5%] w-[30rem] h-[30rem] bg-blue-600/5 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
         <div class="absolute bottom-20 left-[10%] w-80 h-80 bg-cyan/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
 
-        <!-- Navigation -->
         <nav class="fixed w-full z-50 glass border-b-0">
             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                 <a href="#" class="text-cyan font-bold text-xl tracking-wider text-glow">PORTFOLIO</a>
@@ -88,7 +81,6 @@
             </div>
         </nav>
 
-        <!-- Hero Section -->
         <section id="hero" class="min-h-screen flex items-center pt-20 relative z-10">
             <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
                 <div>
@@ -119,7 +111,6 @@
             </div>
         </section>
 
-        <!-- About & Education -->
         <section id="about" class="py-20 bg-lightNavy/50 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">01.</span> ประวัติการศึกษา</h2>
@@ -134,7 +125,6 @@
             </div>
         </section>
 
-        <!-- Skills -->
         <section id="skills" class="py-20 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">02.</span> ทักษะความเชี่ยวชาญ</h2>
@@ -184,7 +174,6 @@
             </div>
         </section>
 
-        <!-- Experience & Internship Photos -->
         <section id="experience" class="py-20 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ประสบการณ์การทำงาน</h2>
@@ -203,7 +192,6 @@
                         <li><i class="fa-solid fa-check text-cyan mr-2"></i> ให้บริการ IT Support แก้ไขปัญหา Hardware, Software และเน็ตเวิร์กพื้นฐาน</li>
                     </ul>
 
-                    <!-- Photo Grid -->
                     <h4 class="text-white font-medium mb-4 flex items-center"><i class="fa-solid fa-camera text-cyan mr-2"></i> บรรยากาศการทำงาน (Hands-on Experience)</h4>
                     
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -239,13 +227,11 @@
             </div>
         </section>
 
-        <!-- Projects -->
         <section id="projects" class="py-20 bg-lightNavy/50 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">04.</span> ผลงานที่โดดเด่น (Projects)</h2>
                 
                 <div class="space-y-12">
-                    <!-- Project 1 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="w-full aspect-video overflow-hidden bg-navy relative">
                             <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
@@ -267,7 +253,6 @@
                         </div>
                     </div>
 
-                    <!-- Project 2 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="p-8 flex flex-col justify-center order-2 md:order-1">
                             <p class="text-cyan mb-2 text-sm font-medium">Internal Tool</p>
@@ -288,7 +273,6 @@
                         </div>
                     </div>
 
-                    <!-- Project 3 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="w-full aspect-video overflow-hidden bg-navy relative flex items-center justify-center">
                             <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
@@ -318,7 +302,7 @@
     </div>
 
     <script>
-        // 1. ระบบจำลอง Skeleton Loader (แก้ไขไม่ให้ค้างเมื่อโหลดรูปไม่ขึ้น)
+        // 1. ระบบจำลอง Skeleton Loader
         document.addEventListener('DOMContentLoaded', () => {
             const skeletonScreen = document.getElementById('skeleton-screen');
             const mainContent = document.getElementById('main-content');
@@ -327,6 +311,9 @@
                 if (skeletonScreen && mainContent) {
                     skeletonScreen.style.opacity = '0';
                     mainContent.classList.remove('opacity-0');
+                    
+                    // ปลดล็อกการเลื่อนหน้าจอเมื่อโหลดเสร็จ
+                    document.body.classList.remove('overflow-hidden');
                     
                     // เคลียร์ Loader ออกจาก DOM เมื่อมองไม่เห็นแล้ว
                     setTimeout(() => {
