@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Anantayot Intharaphong</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Kanit -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -29,13 +26,10 @@
         body { background-color: #0a192f; color: #8892b0; }
         .glass { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(100, 255, 218, 0.1); }
         .text-glow { text-shadow: 0 0 10px rgba(100, 255, 218, 0.5); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan selection:text-navy">
 
-    <!-- Navigation -->
     <nav class="fixed w-full z-50 glass border-b-0">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="#" class="text-cyan font-bold text-xl tracking-wider text-glow">PORTFOLIO</a>
@@ -48,7 +42,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="hero" class="min-h-screen flex items-center pt-20">
         <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -68,7 +61,6 @@
                 </div>
             </div>
             <div class="flex justify-center">
-                <!-- ใส่รูปโปรไฟล์ของคุณตรงนี้ -->
                 <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-cyan overflow-hidden shadow-[0_0_30px_rgba(100,255,218,0.3)]">
                     <img src="https://via.placeholder.com/400x400.png?text=Profile+Picture" alt="Anantayot" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
                 </div>
@@ -76,7 +68,6 @@
         </div>
     </section>
 
-    <!-- About & Education -->
     <section id="about" class="py-20 bg-lightNavy">
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">01.</span> ประวัติการศึกษา</h2>
@@ -91,7 +82,6 @@
         </div>
     </section>
 
-    <!-- Skills -->
     <section id="skills" class="py-20">
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">02.</span> ทักษะความเชี่ยวชาญ</h2>
@@ -113,7 +103,7 @@
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Windows Installation</span>
                         <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Hardware Troubleshooting</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Printer Setup]</span>
+                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Printer Setup</span>
                         <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Remote Support</span>
                     </div>
                 </div>
@@ -141,68 +131,14 @@
         </div>
     </section>
 
-    <!-- Experience & Internship Photos -->
-    <section id="experience" class="py-20 bg-lightNavy">
+    <section id="projects" class="py-20 bg-lightNavy">
         <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ประสบการณ์การทำงาน</h2>
-            
-            <div class="glass p-8 rounded-xl mb-8">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-200">IT Support Intern</h3>
-                        <p class="text-lg text-gray-400">LV Automation</p>
-                    </div>
-                    <span class="text-cyan">เมษายน 2026 - พฤษภาคม 2026</span>
-                </div>
-                <ul class="space-y-2 text-gray-400 mb-8">
-                    <li><i class="fa-solid fa-check text-cyan mr-2"></i> พัฒนาระบบ "LV Automation Hub" ด้วย PHP, MySQL, HTML, CSS และ JavaScript สำหรับรับแจ้งซ่อม จองห้องประชุม และติดตามงาน</li>
-                    <li><i class="fa-solid fa-check text-cyan mr-2"></i> ดูแลและพัฒนาระบบ Automation ด้วย n8n บน Docker Container เชื่อมต่อ LINE Messaging API</li>
-                    <li><i class="fa-solid fa-check text-cyan mr-2"></i> ให้บริการ IT Support แก้ไขปัญหา Hardware, Software และเน็ตเวิร์กพื้นฐาน</li>
-                </ul>
-
-                <!-- Photo Grid -->
-                <h4 class="text-white font-medium mb-4">บรรยากาศการทำงาน (Hands-on Experience)</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- รูปที่ 1 -->
-                    <div class="relative group overflow-hidden rounded-lg cursor-pointer h-48 border border-gray-700">
-                        <!-- เปลี่ยน src ให้ชี้ไปที่โฟลเดอร์ internship-photos -->
-                        <img src="internship-photos/photo1.jpg" onerror="this.src='https://via.placeholder.com/400x300.png?text=Hardware+%26+Network'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                            <span class="text-cyan font-medium">Hardware & Network</span>
-                        </div>
-                    </div>
-                    <!-- รูปที่ 2 -->
-                    <div class="relative group overflow-hidden rounded-lg cursor-pointer h-48 border border-gray-700">
-                        <img src="internship-photos/photo2.jpg" onerror="this.src='https://via.placeholder.com/400x300.png?text=System+Setup'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                            <span class="text-cyan font-medium">System Configuration</span>
-                        </div>
-                    </div>
-                    <!-- รูปที่ 3 -->
-                    <div class="relative group overflow-hidden rounded-lg cursor-pointer h-48 border border-gray-700">
-                        <img src="internship-photos/photo3.jpg" onerror="this.src='https://via.placeholder.com/400x300.png?text=User+Support'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                            <span class="text-cyan font-medium">Helpdesk Support</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects -->
-    <section id="projects" class="py-20">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">04.</span> ผลงานที่โดดเด่น (Projects)</h2>
+            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ผลงานที่โดดเด่น (Projects)</h2>
             
             <div class="space-y-12">
-                <!-- Project 1 -->
                 <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
-                    <div class="h-64 md:h-auto overflow-hidden relative">
-                        <!-- Image Slider Placeholder (ดึงรูปจาก p1 image/mycommiss) -->
-                        <div class="flex w-full h-full overflow-x-auto snap-x hide-scrollbar">
-                            <img src="p1 image/mycommiss/1.jpg" onerror="this.src='https://via.placeholder.com/600x400.png?text=E-Commerce+Dashboard'" class="snap-center w-full h-full object-cover flex-shrink-0 transition duration-500 group-hover:scale-105">
-                        </div>
+                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
+                        <img id="slider-p1" src="image/mycommiss/1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
                     </div>
                     <div class="p-8 flex flex-col justify-center">
                         <p class="text-cyan mb-2 text-sm">Project จบ</p>
@@ -220,7 +156,6 @@
                     </div>
                 </div>
 
-                <!-- Project 2 -->
                 <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
                     <div class="p-8 flex flex-col justify-center order-2 md:order-1">
                         <p class="text-cyan mb-2 text-sm">Internal Tool</p>
@@ -235,21 +170,14 @@
                             <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">LINE API</span>
                         </div>
                     </div>
-                    <div class="h-64 md:h-auto overflow-hidden relative order-1 md:order-2">
-                        <!-- Image Slider Placeholder (ดึงรูปจาก p2 image/LV-Automation-hub) -->
-                        <div class="flex w-full h-full overflow-x-auto snap-x hide-scrollbar">
-                            <img src="p2 image/LV-Automation-hub/1.jpg" onerror="this.src='https://via.placeholder.com/600x400.png?text=LV+Automation+Hub'" class="snap-center w-full h-full object-cover flex-shrink-0 transition duration-500 group-hover:scale-105">
-                        </div>
+                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center order-1 md:order-2">
+                        <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
                     </div>
                 </div>
 
-                <!-- Project 3 -->
                 <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
-                    <div class="h-64 md:h-auto overflow-hidden relative">
-                        <!-- Image Slider Placeholder (ดึงรูปจาก p3) -->
-                        <div class="flex w-full h-full overflow-x-auto snap-x hide-scrollbar">
-                            <img src="p3/1.jpg" onerror="this.src='https://via.placeholder.com/600x400.png?text=Sale+%26+Engineer+Tracking'" class="snap-center w-full h-full object-cover flex-shrink-0 transition duration-500 group-hover:scale-105">
-                        </div>
+                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
+                        <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
                     </div>
                     <div class="p-8 flex flex-col justify-center">
                         <p class="text-cyan mb-2 text-sm">กำลังพัฒนา (In Development)</p>
@@ -268,11 +196,62 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="py-8 text-center text-gray-500 text-sm">
         <p>Designed & Built by Anantayot Intharaphong</p>
         <p class="mt-2">📞 0903262100 | ✉️ anantayot.int@gmail.com</p>
     </footer>
 
+    <script>
+        // ฟังก์ชันเปลี่ยนรูปภาพอัตโนมัติ
+        function setupAutoSlider(elementId, imageArray, intervalTime) {
+            const imgElement = document.getElementById(elementId);
+            if (!imgElement) return;
+
+            let currentIndex = 0;
+
+            setInterval(() => {
+                // ทำให้ภาพค่อยๆ จางลง
+                imgElement.style.opacity = '0.3';
+                
+                setTimeout(() => {
+                    // เปลี่ยนรูปภาพ
+                    currentIndex = (currentIndex + 1) % imageArray.length;
+                    imgElement.src = imageArray[currentIndex];
+                    // ทำให้ภาพกลับมาสว่าง
+                    imgElement.style.opacity = '1';
+                }, 300); // ระยะเวลาที่รอให้จางลง (แมตช์กับ Tailwind duration-500)
+            }, intervalTime);
+        }
+
+        // เริ่มต้นการทำงานเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ==========================================
+            // ตั้งค่ารูปภาพสำหรับ Project 1: MyCommiss
+            // ==========================================
+            const p1Images = [
+                "image/mycommiss/1.png",
+                "image/mycommiss/2.png", // เพิ่มชื่อรูปที่ต้องการลงไปได้เลย
+                "image/mycommiss/3.png"
+            ];
+            // เรียกใช้งาน (รูปเปลี่ยนทุกๆ 3.5 วินาที)
+            setupAutoSlider('slider-p1', p1Images, 3500);
+
+            // ==========================================
+            // ตั้งค่ารูปภาพสำหรับ Project 2: LV Automation Hub
+            // ==========================================
+            const p2Images = [
+                "image/LV-automation-hub/LVhub1.png",
+                "image/LV-automation-hub/LVhub2.png",
+                "image/LV-automation-hub/LVhub3.png",
+                "image/LV-automation-hub/LVhub4.png",
+                "image/LV-automation-hub/LVhub5.png"
+                // คุณสามารถใส่เครื่องหมายลูกน้ำ , แล้วพิมพ์เพิ่มไปจนถึง LVhub19 ได้เลยครับ
+            ];
+            // เรียกใช้งาน (รูปเปลี่ยนทุกๆ 3 วินาที)
+            setupAutoSlider('slider-p2', p2Images, 3000);
+
+        });
+    </script>
 </body>
 </html>
