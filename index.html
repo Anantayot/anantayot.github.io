@@ -313,19 +313,21 @@
     </div>
 
     <script>
-        // 1. ระบบจำลอง Skeleton Loader
-        window.addEventListener('load', () => {
+        // 1. ระบบจำลอง Skeleton Loader (แก้ไขไม่ให้ค้างเมื่อโหลดรูปไม่ขึ้น)
+        document.addEventListener('DOMContentLoaded', () => {
             const skeletonScreen = document.getElementById('skeleton-screen');
             const mainContent = document.getElementById('main-content');
             
             setTimeout(() => {
-                skeletonScreen.style.opacity = '0';
-                mainContent.classList.remove('opacity-0');
-                
-                // เคลียร์ Loader ออกจาก DOM เมื่อมองไม่เห็นแล้ว
-                setTimeout(() => {
-                    skeletonScreen.style.display = 'none';
-                }, 700);
+                if (skeletonScreen && mainContent) {
+                    skeletonScreen.style.opacity = '0';
+                    mainContent.classList.remove('opacity-0');
+                    
+                    // เคลียร์ Loader ออกจาก DOM เมื่อมองไม่เห็นแล้ว
+                    setTimeout(() => {
+                        skeletonScreen.style.display = 'none';
+                    }, 700);
+                }
             }, 1500); // แสดงโครงร่างกระพริบหลอกไว้เป็นเวลา 1.5 วินาที
         });
 
@@ -337,6 +339,8 @@
         const typewriterElement = document.getElementById('typewriter');
 
         function typeEffect() {
+            if (!typewriterElement) return;
+            
             const currentWord = words[wordIndex];
             if (isDeleting) {
                 typewriterElement.textContent = currentWord.substring(0, charIndex - 1);
@@ -372,6 +376,7 @@
                 imgElement.style.opacity = '0.2';
                 setTimeout(() => {
                     currentIndex = (currentIndex + 1) % imageArray.length;
+                    // เช็คกันเหนียวเผื่อหาไฟล์รูปไม่เจอ ให้ข้ามไปเลย
                     imgElement.src = imageArray[currentIndex];
                     imgElement.style.opacity = '1';
                 }, 300);
