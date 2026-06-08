@@ -16,6 +16,7 @@
                     colors: {
                         navy: '#0a192f',
                         lightNavy: '#112240',
+                        slateGray: '#8892b0',
                         cyan: '#64ffda',
                     }
                 }
@@ -23,257 +24,316 @@
         }
     </script>
     <style>
-        body { background-color: #0a192f; color: #8892b0; }
-        .glass { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(100, 255, 218, 0.1); }
+        body { background-color: #0a192f; color: #8892b0; overflow-x: hidden; }
+        .glass { background: rgba(17, 34, 64, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(100, 255, 218, 0.1); }
         .text-glow { text-shadow: 0 0 10px rgba(100, 255, 218, 0.5); }
+        
+        /* Custom Keyframe Animations ด้านหลังขยับได้ */
+        @keyframes floatBlob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(40px, -60px) scale(1.15); }
+            66% { transform: translate(-30px, 30px) scale(0.85); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: floatBlob 10s infinite ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan selection:text-navy">
 
-    <nav class="fixed w-full z-50 glass border-b-0">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" class="text-cyan font-bold text-xl tracking-wider text-glow">PORTFOLIO</a>
-            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
-                <a href="#about" class="hover:text-cyan transition-colors">เกี่ยวกับฉัน</a>
-                <a href="#skills" class="hover:text-cyan transition-colors">ทักษะ</a>
-                <a href="#experience" class="hover:text-cyan transition-colors">ประสบการณ์</a>
-                <a href="#projects" class="hover:text-cyan transition-colors">ผลงาน</a>
-            </div>
-        </div>
-    </nav>
-
-    <section id="hero" class="min-h-screen flex items-center pt-20">
-        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <p class="text-cyan font-medium mb-4 text-lg">สวัสดีครับ, ผมชื่อ</p>
-                <h1 class="text-5xl md:text-6xl font-bold text-gray-100 mb-4">อนันตยศ อินทราพงศ์</h1>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-400 mb-6">IT Support Intern</h2>
-                <p class="text-lg leading-relaxed mb-8">
-                    นักศึกษาจบใหม่สาย IT ที่มีประสบการณ์ฝึกงานด้าน IT Support สนใจและมีแพสชันด้าน Infrastructure, Network มีประสบการณ์ในการแก้ไขปัญหา Hardware/Software รวมถึงการใช้งาน Synology NAS, Docker และระบบ Automation พื้นฐาน
-                </p>
-                <div class="flex space-x-4">
-                    <a href="mailto:anantayot.int@gmail.com" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan hover:text-navy transition duration-300">
-                        <i class="fa-solid fa-envelope mr-2"></i> anantayot.int@gmail.com
-                    </a>
-                    <a href="https://github.com/Anantayot" target="_blank" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan hover:text-navy transition duration-300">
-                        <i class="fa-brands fa-github mr-2"></i> GitHub
-                    </a>
+    <div id="skeleton-screen" class="fixed inset-0 z-[100] bg-navy flex flex-col justify-center items-center px-6 transition-opacity duration-700">
+        <div class="max-w-4xl w-full space-y-8 animate-pulse">
+            <div class="h-6 bg-lightNavy rounded-md w-1/4 mb-12"></div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-4">
+                    <div class="h-4 bg-lightNavy rounded-md w-1/3"></div>
+                    <div class="h-12 bg-lightNavy rounded-md w-3/4"></div>
+                    <div class="h-8 bg-lightNavy rounded-md w-1/2"></div>
+                    <div class="h-20 bg-lightNavy rounded-md w-full"></div>
+                    <div class="flex space-x-4">
+                        <div class="h-12 bg-lightNavy rounded-md w-32"></div>
+                        <div class="h-12 bg-lightNavy rounded-md w-32"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-center">
-                <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-cyan overflow-hidden shadow-[0_0_30px_rgba(100,255,218,0.3)]">
-                    <img src="internship-photos/profile.jpeg" alt="Anantayot" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+                <div class="flex justify-center">
+                    <div class="w-64 h-64 md:w-80 md:h-80 bg-lightNavy rounded-full"></div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section id="about" class="py-20 bg-lightNavy">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">01.</span> ประวัติการศึกษา</h2>
-            <div class="glass p-8 rounded-xl border-l-4 border-l-cyan">
-                <h3 class="text-xl font-bold text-gray-200">มหาวิทยาลัยมหาสารคาม (Mahasarakham University)</h3>
-                <p class="text-cyan mt-1">พฤษภาคม 2026</p>
-                <ul class="mt-4 space-y-2 text-gray-400">
-                    <li><i class="fa-solid fa-caret-right text-cyan mr-2"></i> ปริญญาตรี บริหารธุรกิจบัณฑิต (B.B.A.) สาขาวิชาคอมพิวเตอร์ธุรกิจ คณะการบัญชีและการจัดการ</li>
-                    <li><i class="fa-solid fa-caret-right text-cyan mr-2"></i> เกรดเฉลี่ยสะสม (GPA): 3.41</li>
-                </ul>
+    <div id="main-content" class="opacity-0 transition-opacity duration-1000 relative">
+        
+        <div class="absolute top-20 left-[-10%] w-96 h-96 bg-cyan/5 rounded-full blur-3xl animate-blob"></div>
+        <div class="absolute top-[40%] right-[-5%] w-[30rem] h-[30rem] bg-blue-600/5 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-20 left-[10%] w-80 h-80 bg-cyan/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+
+        <nav class="fixed w-full z-50 glass border-b-0">
+            <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                <a href="#" class="text-cyan font-bold text-xl tracking-wider text-glow">PORTFOLIO</a>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+                    <a href="#about" class="hover:text-cyan transition-colors">เกี่ยวกับฉัน</a>
+                    <a href="#skills" class="hover:text-cyan transition-colors">ทักษะ</a>
+                    <a href="#projects" class="hover:text-cyan transition-colors">ผลงาน</a>
+                </div>
             </div>
-        </div>
-    </section>
+        </nav>
 
-    <section id="skills" class="py-20">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">02.</span> ทักษะความเชี่ยวชาญ</h2>
-            <div class="grid md:grid-cols-2 gap-8">
+        <section id="hero" class="min-h-screen flex items-center pt-20 relative z-10">
+            <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-cyan font-medium mb-4 text-lg">สวัสดีครับ, ผมชื่อ</p>
+                    <h1 class="text-5xl md:text-6xl font-bold text-gray-100 mb-4">อนันตยศ อินทราพงศ์</h1>
+                    
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-400 mb-6 h-10 flex items-center">
+                        <span id="typewriter" class="border-r-2 border-cyan pr-1 text-gray-200"></span>
+                    </h2>
+                    
+                    <p class="text-lg leading-relaxed mb-8 text-slateGray">
+                        นักศึกษาจบใหม่สาย IT ที่มีประสบการณ์ฝึกงานด้าน IT Support สนใจและมีแพสชันด้าน Infrastructure, Network มีประสบการณ์ในการแก้ไขปัญหา Hardware/Software รวมถึงการใช้งาน Synology NAS, Docker และระบบ Automation พื้นฐาน
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="mailto:anantayot.int@gmail.com" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan/10 transition-all duration-300 transform hover:-translate-y-1 shadow-[0_4px_20px_rgba(100,255,218,0.05)]">
+                            <i class="fa-solid fa-envelope mr-2"></i> anantayot.int@gmail.com
+                        </a>
+                        <a href="https://github.com/Anantayot" target="_blank" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan/10 transition-all duration-300 transform hover:-translate-y-1 shadow-[0_4px_20px_rgba(100,255,218,0.05)]">
+                            <i class="fa-brands fa-github mr-2"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-cyan overflow-hidden shadow-[0_0_35px_rgba(100,255,218,0.25)] hover:shadow-[0_0_50px_rgba(100,255,218,0.45)] transition-all duration-500 transform hover:scale-105">
+                        <img src="internship-photos/profile.jpeg" alt="Anantayot" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-20 bg-lightNavy/50 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">01.</span> ประวัติการศึกษา</h2>
+                <div class="glass p-8 rounded-xl border-l-4 border-l-cyan transform hover:-translate-y-1 transition duration-300 hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
+                    <h3 class="text-xl font-bold text-gray-200">มหาวิทยาลัยมหาสารคาม (Mahasarakham University)</h3>
+                    <p class="text-cyan mt-1 font-medium">พฤษภาคม 2026</p>
+                    <ul class="mt-4 space-y-2 text-gray-400">
+                        <li><i class="fa-solid fa-caret-right text-cyan mr-2"></i> ปริญญาตรี บริหารธุรกิจบัณฑิต (B.B.A.) สาขาวิชาคอมพิวเตอร์ธุรกิจ คณะการบัญชีและการจัดการ</li>
+                        <li><i class="fa-solid fa-caret-right text-cyan mr-2"></i> เกรดเฉลี่ยสะสม (GPA): 3.41</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-20 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">02.</span> ทักษะความเชี่ยวชาญ</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    
+                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
+                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-server text-cyan mr-2 animate-pulse"></i> Infrastructure & Network</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Synology DSM</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">TCP/IP</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">DNS / DHCP / VLAN</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Cisco Packet Tracer</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Linux Basics</span>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
+                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-headset text-cyan mr-2 animate-pulse"></i> IT Support</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Windows Installation</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Hardware Troubleshooting</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Printer Setup</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Remote Support</span>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
+                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-robot text-cyan mr-2 animate-pulse"></i> Automation & Tools</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Docker</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">n8n</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">LINE Messaging API</span>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
+                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-code text-cyan mr-2 animate-pulse"></i> Web Development</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">PHP</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">MySQL</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">HTML / CSS / JavaScript</span>
+                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">REST API</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-20 bg-lightNavy/50 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ผลงานที่โดดเด่น (Projects)</h2>
                 
-                <div class="glass p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-gray-200 mb-4"><i class="fa-solid fa-server text-cyan mr-2"></i> Infrastructure & Network</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Synology DSM</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">TCP/IP</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">DNS / DHCP / VLAN</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Cisco Packet Tracer</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Linux Basics</span>
+                <div class="space-y-12">
+                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
+                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center relative">
+                            <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
+                        </div>
+                        <div class="p-8 flex flex-col justify-center">
+                            <p class="text-cyan mb-2 text-sm font-medium">Project จบ</p>
+                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">E-Commerce & Automated Sales Dashboard</h3>
+                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
+                                ระบบอีคอมเมิร์ซอุปกรณ์ไอทีพร้อมระบบสรุปยอดขายอัตโนมัติด้วยเทคโนโลยี n8n ช่วยประมวลผลคำสั่งซื้อและส่งแจ้งเตือนผ่าน LINE พร้อมบูรณาการ AI สำหรับตรวจสอบสลิปโอนเงิน และแสดงแดชบอร์ดสรุปยอดขายด้วย Looker Studio
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-auto">
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">PHP</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">MySQL</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">n8n</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">LINE API</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Looker Studio</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="glass p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-gray-200 mb-4"><i class="fa-solid fa-headset text-cyan mr-2"></i> IT Support</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Windows Installation</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Hardware Troubleshooting</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Printer Setup</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Remote Support</span>
+                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
+                        <div class="p-8 flex flex-col justify-center order-2 md:order-1">
+                            <p class="text-cyan mb-2 text-sm font-medium">Internal Tool</p>
+                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">LV Automation Hub</h3>
+                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
+                                ระบบศูนย์กลางสำหรับรับแจ้งซ่อมอุปกรณ์ไอที จองห้องประชุม และแจกจ่ายงานสำหรับพนักงานในแผนก IT ทำงานอัตโนมัติด้วย n8n บน Docker เพื่อแจ้งเตือนผ่าน LINE ทันทีที่มีการเปิด Ticket
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-auto">
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">PHP</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Docker</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">n8n</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">LINE API</span>
+                            </div>
+                        </div>
+                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center order-1 md:order-2 relative">
+                            <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="glass p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-gray-200 mb-4"><i class="fa-solid fa-robot text-cyan mr-2"></i> Automation & Tools</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">Docker</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">n8n</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">LINE Messaging API</span>
+                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
+                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
+                            <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                        </div>
+                        <div class="p-8 flex flex-col justify-center">
+                            <p class="text-cyan mb-2 text-sm font-medium">กำลังพัฒนา (In Development)</p>
+                            <h3 class="text-2xl font-bold text-gray-200 mb-4">Sale & Engineer Drawing Tracking System</h3>
+                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
+                                เว็บแอปพลิเคชันสำหรับให้ Sale ติดตามการเขียนแบบของ Engineer พร้อมอัปเดตข้อมูลแบบเรียลไทม์ และระบบสำหรับให้ Engineer อัปโหลดไฟล์วาดแบบต่างๆ เข้าระบบได้โดยตรง
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-auto">
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Web App</span>
+                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">File Management</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="glass p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-gray-200 mb-4"><i class="fa-solid fa-code text-cyan mr-2"></i> Web Development</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">PHP</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">MySQL</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">HTML / CSS / JavaScript</span>
-                        <span class="px-3 py-1 bg-navy border border-cyan/30 text-cyan rounded-full text-sm">REST API</span>
-                    </div>
                 </div>
-
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="projects" class="py-20 bg-lightNavy">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ผลงานที่โดดเด่น (Projects)</h2>
-            
-            <div class="space-y-12">
-                <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
-                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
-                        <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
-                    </div>
-                    <div class="p-8 flex flex-col justify-center">
-                        <p class="text-cyan mb-2 text-sm">Project จบ</p>
-                        <h3 class="text-2xl font-bold text-gray-200 mb-4">E-Commerce & Automated Sales Dashboard</h3>
-                        <p class="text-gray-400 mb-4 text-sm">
-                            ระบบอีคอมเมิร์ซอุปกรณ์ไอทีพร้อมระบบสรุปยอดขายอัตโนมัติด้วยเทคโนโลยี n8n ช่วยประมวลผลคำสั่งซื้อและส่งแจ้งเตือนผ่าน LINE พร้อมบูรณาการ AI สำหรับตรวจสอบสลิปโอนเงิน และแสดงแดชบอร์ดสรุปยอดขายด้วย Looker Studio
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">PHP</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">MySQL</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">n8n</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">LINE API</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">Looker Studio</span>
-                        </div>
-                    </div>
-                </div>
+        <footer class="py-8 text-center text-gray-500 text-sm border-t border-lightNavy">
+            <p>Designed & Built by Anantayot Intharaphong</p>
+            <p class="mt-2">📞 0903262100 | ✉️ anantayot.int@gmail.com</p>
+        </footer>
 
-                <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
-                    <div class="p-8 flex flex-col justify-center order-2 md:order-1">
-                        <p class="text-cyan mb-2 text-sm">Internal Tool</p>
-                        <h3 class="text-2xl font-bold text-gray-200 mb-4">LV Automation Hub</h3>
-                        <p class="text-gray-400 mb-4 text-sm">
-                            ระบบศูนย์กลางสำหรับรับแจ้งซ่อมอุปกรณ์ไอที จองห้องประชุม และแจกจ่ายงานสำหรับพนักงานในแผนก IT ทำงานอัตโนมัติด้วย n8n บน Docker เพื่อแจ้งเตือนผ่าน LINE ทันทีที่มีการเปิด Ticket
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">PHP</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">Docker</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">n8n</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">LINE API</span>
-                        </div>
-                    </div>
-                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center order-1 md:order-2">
-                        <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
-                    </div>
-                </div>
-
-                <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan transition duration-300 group">
-                    <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
-                        <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105">
-                    </div>
-                    <div class="p-8 flex flex-col justify-center">
-                        <p class="text-cyan mb-2 text-sm">กำลังพัฒนา (In Development)</p>
-                        <h3 class="text-2xl font-bold text-gray-200 mb-4">Sale & Engineer Drawing Tracking System</h3>
-                        <p class="text-gray-400 mb-4 text-sm">
-                            เว็บแอปพลิเคชันสำหรับให้ Sale ติดตามการเขียนแบบของ Engineer พร้อมอัปเดตข้อมูลแบบเรียลไทม์ และระบบสำหรับให้ Engineer อัปโหลดไฟล์วาดแบบต่างๆ เข้าระบบได้โดยตรง
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">Web App</span>
-                            <span class="text-xs text-slate-300 bg-slate-800 px-2 py-1 rounded">File Management</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <footer class="py-8 text-center text-gray-500 text-sm">
-        <p>Designed & Built by Anantayot Intharaphong</p>
-        <p class="mt-2">📞 0903262100 | ✉️ anantayot.int@gmail.com</p>
-    </footer>
+    </div>
 
     <script>
-        // ฟังก์ชันเปลี่ยนรูปภาพอัตโนมัติ
+        // 1. ระบบจำลอง Skeleton Loader
+        window.addEventListener('load', () => {
+            const skeletonScreen = document.getElementById('skeleton-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            setTimeout(() => {
+                skeletonScreen.style.opacity = '0';
+                mainContent.classList.remove('opacity-0');
+                
+                // เคลียร์ Loader ออกจาก DOM เมื่อมองไม่เห็นแล้ว
+                setTimeout(() => {
+                    skeletonScreen.style.display = 'none';
+                }, 700);
+            }, 1500); // แสดงโครงร่างกระพริบหลอกไว้เป็นเวลา 1.5 วินาที
+        });
+
+        // 2. ระบบ Typewriter Effect (ตัวอักษรพิมพ์ดีดวิ่ง)
+        const words = ["IT Support Intern", "Network Infrastructure Enthusiast", "Automation Systems Developer"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typewriterElement = document.getElementById('typewriter');
+
+        function typeEffect() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) {
+                typewriterElement.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterElement.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 40 : 80;
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                typeSpeed = 2000; // หยุดรอ 2 วินาทีเมื่อพิมพ์เสร็จคำ
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typeSpeed = 400; // ดีเลย์ก่อนเริ่มพิมพ์คำใหม่
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+        // เริ่มรันอักษรวิ่งหลังโหลดหน้าเว็บบางส่วน
+        setTimeout(typeEffect, 1000);
+
+        // 3. ฟังก์ชันเปลี่ยนรูปภาพสไลเดอร์อัตโนมัติ
         function setupAutoSlider(elementId, imageArray, intervalTime) {
             const imgElement = document.getElementById(elementId);
             if (!imgElement) return;
 
             let currentIndex = 0;
-
             setInterval(() => {
-                // ทำให้ภาพค่อยๆ จางลง
-                imgElement.style.opacity = '0.3';
-                
+                imgElement.style.opacity = '0.2';
                 setTimeout(() => {
-                    // เปลี่ยนรูปภาพ
                     currentIndex = (currentIndex + 1) % imageArray.length;
                     imgElement.src = imageArray[currentIndex];
-                    // ทำให้ภาพกลับมาสว่าง
                     imgElement.style.opacity = '1';
-                }, 300); // ระยะเวลาที่รอให้จางลง (แมตช์กับ Tailwind duration-500)
+                }, 300);
             }, intervalTime);
         }
 
-        // เริ่มต้นการทำงานเมื่อหน้าเว็บโหลดเสร็จ
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // ==========================================
-            // ตั้งค่ารูปภาพสำหรับ Project 1: MyCommiss
-            // ==========================================
+            // สไลเดอร์ Project 1
             const p1Images = [
-                "image/Mycommiss/MC1.png",
-                "image/Mycommiss/MC2.png",
-                "image/Mycommiss/MC3.png",
-                "image/Mycommiss/MC4.png",
-                "image/Mycommiss/MC5.png",
-                "image/Mycommiss/MC6.png",
-                "image/Mycommiss/MC7.png",
-                "image/Mycommiss/MC8.png",
-                "image/Mycommiss/MC9.png",
-                "image/Mycommiss/MC10.png",
-                "image/Mycommiss/MC11.png",
-                "image/Mycommiss/MC12.png"
+                "image/Mycommiss/MC1.png", "image/Mycommiss/MC2.png", "image/Mycommiss/MC3.png",
+                "image/Mycommiss/MC4.png", "image/Mycommiss/MC5.png", "image/Mycommiss/MC6.png",
+                "image/Mycommiss/MC7.png", "image/Mycommiss/MC8.png", "image/Mycommiss/MC9.png",
+                "image/Mycommiss/MC10.png", "image/Mycommiss/MC11.png", "image/Mycommiss/MC12.png"
             ];
-            // เรียกใช้งาน (รูปเปลี่ยนทุกๆ 3.5 วินาที)
             setupAutoSlider('slider-p1', p1Images, 3500);
 
-            // ==========================================
-            // ตั้งค่ารูปภาพสำหรับ Project 2: LV Automation Hub
-            // ==========================================
+            // สไลเดอร์ Project 2
             const p2Images = [
-                "image/LV-automation-hub/LVhub1.png",
-                "image/LV-automation-hub/LVhub2.png",
-                "image/LV-automation-hub/LVhub3.png",
-                "image/LV-automation-hub/LVhub4.png",
-                "image/LV-automation-hub/LVhub5.png",
-                "image/LV-automation-hub/LVhub6.png",
-                "image/LV-automation-hub/LVhub7.png",
-                "image/LV-automation-hub/LVhub8.png",
-                "image/LV-automation-hub/LVhub9.png",
-                "image/LV-automation-hub/LVhub10.png",
-                "image/LV-automation-hub/LVhub11.png",
-                "image/LV-automation-hub/LVhub12.png",
-                "image/LV-automation-hub/LVhub13.png",
-                "image/LV-automation-hub/LVhub14.png",
-                "image/LV-automation-hub/LVhub15.png",
-                "image/LV-automation-hub/LVhub16.png",
-                "image/LV-automation-hub/LVhub17.png",
-                "image/LV-automation-hub/LVhub18.png",
+                "image/LV-automation-hub/LVhub1.png", "image/LV-automation-hub/LVhub2.png", "image/LV-automation-hub/LVhub3.png",
+                "image/LV-automation-hub/LVhub4.png", "image/LV-automation-hub/LVhub5.png", "image/LV-automation-hub/LVhub6.png",
+                "image/LV-automation-hub/LVhub7.png", "image/LV-automation-hub/LVhub8.png", "image/LV-automation-hub/LVhub9.png",
+                "image/LV-automation-hub/LVhub10.png", "image/LV-automation-hub/LVhub11.png", "image/LV-automation-hub/LVhub12.png",
+                "image/LV-automation-hub/LVhub13.png", "image/LV-automation-hub/LVhub14.png", "image/LV-automation-hub/LVhub15.png",
+                "image/LV-automation-hub/LVhub16.png", "image/LV-automation-hub/LVhub17.png", "image/LV-automation-hub/LVhub18.png",
                 "image/LV-automation-hub/LVhub19.png"
-                // คุณสามารถใส่เครื่องหมายลูกน้ำ , แล้วพิมพ์เพิ่มไปจนถึง LVhub19 ได้เลยครับ
             ];
-            // เรียกใช้งาน (รูปเปลี่ยนทุกๆ 3 วินาที)
             setupAutoSlider('slider-p2', p2Images, 3000);
-
         });
     </script>
 </body>
