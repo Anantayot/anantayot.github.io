@@ -173,14 +173,18 @@
             </div>
         </section>
 
+        <!-- Projects -->
         <section id="projects" class="py-20 bg-lightNavy/50 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ผลงานที่โดดเด่น (Projects)</h2>
                 
                 <div class="space-y-12">
+                    <!-- Project 1 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center relative">
-                            <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                        <!-- ล็อกความสูงไว้ที่ 350px (md:h-[350px]) -->
+                        <div class="w-full h-64 md:h-[350px] overflow-hidden bg-navy relative">
+                            <!-- เพิ่ม object-top เพื่อให้โฟกัสขอบจอด้านบนเสมอ รูปจะได้ไม่โดนตัดหัว -->
+                            <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
                             <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
                         </div>
                         <div class="p-8 flex flex-col justify-center">
@@ -199,6 +203,7 @@
                         </div>
                     </div>
 
+                    <!-- Project 2 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="p-8 flex flex-col justify-center order-2 md:order-1">
                             <p class="text-cyan mb-2 text-sm font-medium">Internal Tool</p>
@@ -213,14 +218,17 @@
                                 <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">LINE API</span>
                             </div>
                         </div>
-                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center order-1 md:order-2 relative">
-                            <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                        <!-- ล็อกความสูงไว้ที่ 350px เช่นกัน -->
+                        <div class="w-full h-64 md:h-[350px] overflow-hidden bg-navy order-1 md:order-2 relative">
+                            <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
                             <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
                         </div>
                     </div>
 
+                    <!-- Project 3 -->
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                        <div class="h-64 md:h-auto overflow-hidden bg-navy flex items-center justify-center">
+                        <!-- ล็อกความสูงไว้ที่ 350px เช่นกัน -->
+                        <div class="w-full h-64 md:h-[350px] overflow-hidden bg-navy relative flex items-center justify-center">
                             <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
                         </div>
                         <div class="p-8 flex flex-col justify-center">
