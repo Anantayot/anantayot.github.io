@@ -277,11 +277,13 @@
 
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="w-full aspect-video overflow-hidden bg-navy relative flex items-center justify-center">
-                            <img src="https://via.placeholder.com/600x400.png?text=Coming+Soon" alt="Sale & Engineer Tracking" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                            <img id="slider-p3" src="image/LV-automation-tracker/1.png" alt="Sale & Engineer Tracking" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
+                            
+                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
                         </div>
                         <div class="p-8 flex flex-col justify-center">
                             <p class="text-cyan mb-2 text-sm font-medium">กำลังพัฒนา (In Development)</p>
-                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">LV Automation: Sale & Engineer Tracking</h3>
+                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">LV Automation Tracking</h3>
                             <p class="text-gray-400 mb-4 text-sm leading-relaxed">
                                 เว็บแอปพลิเคชันสำหรับเชื่อมโยงการทำงานภายใน LV Automation เพื่อให้ Sale ติดตามการเขียนแบบของ Engineer พร้อมอัปเดตข้อมูลแบบเรียลไทม์ และมีระบบให้ Engineer อัปโหลดไฟล์วาดแบบต่างๆ เข้าระบบได้โดยตรง
                             </p>
@@ -400,5 +402,12 @@
                 "image/LV-automation-hub/LVhub22.png"
             ];
             setupAutoSlider('slider-p2', p2Images, 3000);
+            
+            const p3Images = [
+                "image/LV-automation-tracker/LVtracker1.png", "image/LV-automation-tracker/LVtracker2.png", "image/LV-automation-tracker/LVtracker3.png",
+                "image/LV-automation-tracker/LVtracker4.png", "image/LV-automation-tracker/LVtracker5.png", "image/LV-automation-tracker/LVtracker6.png"
+
+            ];
+            setupAutoSlider('slider-p3', p3Images, 3500);
         });
     </script></body></html>
