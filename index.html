@@ -176,6 +176,7 @@
             </div>
         </section>
 
+        <!-- Experience & Internship Section -->
         <section id="experience" class="py-20 relative z-10">
             <div class="max-w-6xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ประสบการณ์การทำงาน</h2>
@@ -196,35 +197,44 @@
 
                     <h4 class="text-white font-medium mb-4 flex items-center"><i class="fa-solid fa-camera text-cyan mr-2"></i> บรรยากาศการทำงาน (Hands-on Experience)</h4>
                     
+                    <!-- เปลี่ยน 4 กล่องนี้ให้มี ID สำหรับทำ Slider ภาพฝึกงาน -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700">
-                            <img src="internship-photos/1.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Hardware+%26+Network'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
+                            <img id="slider-intern-1" src="internship-photos/1.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Hardware+%26+Network'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                             <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
                                 <span class="text-cyan font-medium text-sm">ลงวินโด้</span>
                             </div>
                         </div>
 
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700">
-                            <img src="internship-photos/2.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=System+Setup'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
+                            <img id="slider-intern-2" src="internship-photos/2.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=System+Setup'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                             <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
                                 <span class="text-cyan font-medium text-sm">ทำเว็บไซต์</span>
                             </div>
                         </div>
 
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700">
-                            <img src="internship-photos/3.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=User+Support'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
+                            <img id="slider-intern-3" src="internship-photos/3.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=User+Support'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                             <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
                                 <span class="text-cyan font-medium text-sm">ซ่อมคอมพิวเตอร์</span>
                             </div>
                         </div>
 
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700">
-                            <img src="internship-photos/4.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Team+Work'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
+                            <img id="slider-intern-4" src="internship-photos/4.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Team+Work'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                             <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
                                 <span class="text-cyan font-medium text-sm">ลง n8n ใน Docker</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- เพิ่มส่วน Certificate ตรงนี้ -->
+                    <h4 class="text-white font-medium mt-12 mb-4 flex items-center pt-8 border-t border-slate-700"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
+                    <div class="relative group overflow-hidden rounded-xl border border-slate-700 max-w-3xl mx-auto shadow-[0_0_15px_rgba(100,255,218,0.1)]">
+                        <!-- หมายเหตุ: ไฟล์รูปมักจะมีนามสกุล .jpg หรือ .png อย่าลืมเช็กในโฟลเดอร์ให้ตรงนะครับ -->
+                        <img src="certificate/Certificate LV Automation Anantayot.jpg" alt="Certificate LV Automation" class="w-full h-auto object-contain transition duration-500 group-hover:scale-105" onerror="this.src='https://via.placeholder.com/800x600.png?text=Certificate+Not+Found'">
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -277,7 +287,6 @@
 
                     <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
                         <div class="w-full aspect-video overflow-hidden bg-navy relative flex items-center justify-center">
-                            <!-- ✅ แก้ไขชื่อไฟล์ตรงส่วนนี้ให้ตรงกับ JavaScript แล้วครับ -->
                             <img id="slider-p3" src="image/LV-automation-tracker/LVtracker1.png" alt="Sale & Engineer Tracking" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
                             
                             <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
@@ -328,7 +337,7 @@
             }, 1500); // แสดงโครงร่างกระพริบหลอกไว้เป็นเวลา 1.5 วินาที
         });
 
-        // 2. ระบบ Typewriter Effect (ตัวอักษรพิมพ์ดีดวิ่ง)
+        // 2. ระบบ Typewriter Effect
         const words = ["IT Support", "Network & System Administration", "Automation & Web Development"];
         let wordIndex = 0;
         let charIndex = 0;
@@ -360,20 +369,18 @@
 
             setTimeout(typeEffect, typeSpeed);
         }
-        // เริ่มรันอักษรวิ่งหลังโหลดหน้าเว็บบางส่วน
         setTimeout(typeEffect, 1000);
 
         // 3. ฟังก์ชันเปลี่ยนรูปภาพสไลเดอร์อัตโนมัติ
         function setupAutoSlider(elementId, imageArray, intervalTime) {
             const imgElement = document.getElementById(elementId);
-            if (!imgElement) return;
+            if (!imgElement || imageArray.length === 0) return;
 
             let currentIndex = 0;
             setInterval(() => {
                 imgElement.style.opacity = '0.2';
                 setTimeout(() => {
                     currentIndex = (currentIndex + 1) % imageArray.length;
-                    // เช็คกันเหนียวเผื่อหาไฟล์รูปไม่เจอ ให้ข้ามไปเลย
                     imgElement.src = imageArray[currentIndex];
                     imgElement.style.opacity = '1';
                 }, 300);
@@ -381,7 +388,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // สไลเดอร์ Project 1
+            // =====================================
+            // สไลเดอร์โปรเจกต์ 1-3
+            // =====================================
             const p1Images = [
                 "image/Mycommiss/MC1.png", "image/Mycommiss/MC2.png", "image/Mycommiss/MC3.png",
                 "image/Mycommiss/MC4.png", "image/Mycommiss/MC5.png", "image/Mycommiss/MC6.png",
@@ -391,7 +400,6 @@
             ];
             setupAutoSlider('slider-p1', p1Images, 3500);
 
-            // สไลเดอร์ Project 2
             const p2Images = [
                 "image/LV-automation-hub/LVhub1.png", "image/LV-automation-hub/LVhub2.png", "image/LV-automation-hub/LVhub3.png",
                 "image/LV-automation-hub/LVhub4.png", "image/LV-automation-hub/LVhub5.png", "image/LV-automation-hub/LVhub6.png",
@@ -404,12 +412,28 @@
             ];
             setupAutoSlider('slider-p2', p2Images, 3000);
             
-            // สไลเดอร์ Project 3
             const p3Images = [
                 "image/LV-automation-tracker/LVtracker1.png", "image/LV-automation-tracker/LVtracker2.png", "image/LV-automation-tracker/LVtracker3.png",
                 "image/LV-automation-tracker/LVtracker4.png", "image/LV-automation-tracker/LVtracker5.png", "image/LV-automation-tracker/LVtracker6.png"
             ];
             setupAutoSlider('slider-p3', p3Images, 3200);
+
+            // =====================================
+            // สไลเดอร์รูปการฝึกงาน (แบ่งเป็น 4 กล่อง)
+            // =====================================
+            // สมมติว่ามีรูปฝึกงานทั้งหมด 6 รูป เราสามารถกระจายรูปใส่กล่องต่างๆ ให้มันสลับกันได้ครับ
+            // คุณสามารถเพิ่มชื่อไฟล์รูป เช่น "internship-photos/5.jpg", "internship-photos/6.jpg" เข้าไปใน Array ด้านล่างได้เลยครับ
+            
+            const internBox1 = ["internship-photos/1.jpg", "internship-photos/5.jpg"];
+            const internBox2 = ["internship-photos/2.jpg", "internship-photos/6.jpg"];
+            const internBox3 = ["internship-photos/3.jpg", "internship-photos/1.jpg"]; 
+            const internBox4 = ["internship-photos/4.jpg", "internship-photos/2.jpg"]; 
+
+            // ตั้งเวลาสลับรูปให้เหลื่อมกัน (3วิ, 3.2วิ, 3.4วิ, 3.6วิ) เว็บจะดูขยับแบบลื่นไหล ไม่พร้อมกันจนเกินไป
+            setupAutoSlider('slider-intern-1', internBox1, 3000);
+            setupAutoSlider('slider-intern-2', internBox2, 3200);
+            setupAutoSlider('slider-intern-3', internBox3, 3400);
+            setupAutoSlider('slider-intern-4', internBox4, 3600);
         });
     </script>
 </body>
