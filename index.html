@@ -226,7 +226,6 @@
                         </div>
                     </div>
 
-                    <!-- แก้ไขส่วน Certificate เอาเอฟเฟกต์ลิงก์และลูกเล่นเมาส์ชี้ออก -->
                     <div class="mt-12 pt-8 border-t border-slate-700 max-w-3xl mx-auto">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-2">
                             <h4 class="text-white font-medium flex items-center"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
@@ -320,6 +319,12 @@
     </div>
 
     <script>
+        // บังคับให้หน้าเว็บกลับไปบนสุดทุกครั้งที่รีเฟรช
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
         // 1. ระบบจำลอง Skeleton Loader
         document.addEventListener('DOMContentLoaded', () => {
             const skeletonScreen = document.getElementById('skeleton-screen');
