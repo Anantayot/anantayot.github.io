@@ -1,454 +1,601 @@
-<!DOCTYPE html>
-<html lang="th" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Anantayot Intharaphong</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<?php
+session_start();
+require_once '../connectdb.php';
+
+// เช็คสิทธิ์ ต้องเป็น 'sales'
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sales') {
+    header("Location: ../index.php");
+    exit();
+}
+
+$sales_name = $_SESSION['name'];
+
+function formatBytes($bytes, $precision = 2) {
+    if ($bytes <= 0) return '0 B';
+    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+    $bytes /= pow(1024, $pow);
+    return round($bytes, $precision) . ' ' . $units[$pow];
+}
+
+function getFileIcon($filename) {
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case 'pdf': return '📕';
+        case 'doc': case 'docx': return '📘';
+        case 'xls': case 'xlsx': case 'csv': return '📊';
+        case 'zip': case 'rar': case '7z': return '🗜️';
+        case 'txt': return '📝';
+        default: return '📄';
+    }
+}
+
+// =========================================================
+// 🔒 ระบบอัปโหลดไฟล์สำหรับ Sales (แยกโฟลเดอร์)
+// =========================================================
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_sales_file'])) {
+    $task_id = (int)$_POST['task_id'];
+    $engineer_name = $_POST['engineer_name'] ?? 'ไม่ระบุ';
+    $safe_eng_name = str_replace(' ', '_', $engineer_name);
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Kanit', 'sans-serif'] },
-                    colors: {
-                        navy: '#0a192f',
-                        lightNavy: '#112240',
-                        slateGray: '#8892b0',
-                        cyan: '#64ffda',
+    $max_file_size = 50 * 1024 * 1024; 
+    $max_files = 6; 
+    
+    try {
+        if (isset($_FILES['sales_files']) && !empty($_FILES['sales_files']['name'][0])) {
+            $total_files = count(array_filter($_FILES['sales_files']['name']));
+            if ($total_files > $max_files) {
+                $_SESSION['error_msg'] = "❌ อัปโหลดได้สูงสุดครั้งละ $max_files ไฟล์";
+                header("Location: dashboard.php"); exit();
+            }
+
+            $upload_dir = "../uploads/" . $safe_eng_name . "/task_" . $task_id . "_sales/";
+            if (!is_dir($upload_dir)) { mkdir($upload_dir, 0777, true); }
+
+            $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'zip', 'rar', 'drawio', 'txt'];
+            $dangerous_keywords = ['.php', '.phtml', '.exe', '.sh', '.bat', '.cgi', '.pl', '.html', '.js'];
+            $success_count = 0;
+
+            foreach ($_FILES['sales_files']['name'] as $key => $name) {
+                if ($_FILES['sales_files']['error'][$key] == 0) {
+                    $tmp_name = $_FILES['sales_files']['tmp_name'][$key];
+                    $name_lower = strtolower($name);
+
+                    if (!is_uploaded_file($tmp_name)) continue;
+                    $is_dangerous = false;
+                    foreach ($dangerous_keywords as $danger) { if (strpos($name_lower, $danger) !== false) { $is_dangerous = true; break; } }
+                    if ($is_dangerous) continue;
+
+                    $file_extension = pathinfo($name_lower, PATHINFO_EXTENSION);
+                    if (!in_array($file_extension, $allowed_extensions)) continue;
+                    if ($_FILES['sales_files']['size'][$key] > $max_file_size) continue;
+
+                    $clean_name = preg_replace('/[^A-Za-z0-9ก-๙\.\-\_]/u', '_', basename($name));
+                    if (empty(str_replace('.', '', $clean_name))) { $clean_name = 'sales_file_' . time() . '.' . $file_extension; }
+
+                    $target_file = $upload_dir . $clean_name;
+                    $counter = 1;
+                    $file_parts = pathinfo($clean_name);
+                    $base_name = $file_parts['filename'];
+                    while (file_exists($target_file)) {
+                        $clean_name = $base_name . '_' . $counter . '.' . $file_extension;
+                        $target_file = $upload_dir . $clean_name;
+                        $counter++;
                     }
+                    
+                    if (move_uploaded_file($tmp_name, $target_file)) { $success_count++; }
                 }
             }
-        }
-    </script>
-    <style>
-        body { background-color: #0a192f; color: #8892b0; overflow-x: hidden; }
-        .glass { background: rgba(17, 34, 64, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(100, 255, 218, 0.1); }
-        .text-glow { text-shadow: 0 0 10px rgba(100, 255, 218, 0.5); }
-        
-        /* Custom Keyframe Animations ด้านหลังขยับได้ */
-        @keyframes floatBlob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(40px, -60px) scale(1.15); }
-            66% { transform: translate(-30px, 30px) scale(0.85); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: floatBlob 10s infinite ease-in-out; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-    </style>
-</head>
-<body class="antialiased selection:bg-cyan selection:text-navy overflow-hidden">
 
-    <div id="skeleton-screen" class="fixed inset-0 z-[100] bg-navy flex flex-col justify-center items-center px-6 transition-opacity duration-700">
-        <div class="max-w-4xl w-full space-y-8 animate-pulse">
-            <div class="h-6 bg-lightNavy rounded-md w-1/4 mb-12"></div>
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-4">
-                    <div class="h-4 bg-lightNavy rounded-md w-1/3"></div>
-                    <div class="h-12 bg-lightNavy rounded-md w-3/4"></div>
-                    <div class="h-8 bg-lightNavy rounded-md w-1/2"></div>
-                    <div class="h-20 bg-lightNavy rounded-md w-full"></div>
-                    <div class="flex space-x-4">
-                        <div class="h-12 bg-lightNavy rounded-md w-32"></div>
-                        <div class="h-12 bg-lightNavy rounded-md w-32"></div>
-                    </div>
+            if ($success_count > 0) { 
+                $stmt_update = $pdo->prepare("UPDATE tasks SET status = 'in_progress' WHERE task_id = :task_id AND status = 'pending'");
+                $stmt_update->execute([':task_id' => $task_id]);
+                $_SESSION['success_msg'] = "📤 อัปโหลดไฟล์อ้างอิงสำเร็จ $success_count ไฟล์! (ปรับสถานะกำลังดำเนินการ)"; 
+            } else { 
+                $_SESSION['error_msg'] = "❌ ไม่สามารถอัปโหลดไฟล์ได้ กรุณาตรวจสอบนามสกุลหรือขนาดไฟล์"; 
+            }
+        } else {
+            $_SESSION['error_msg'] = "⚠️ กรุณาเลือกไฟล์ก่อนกดอัปโหลด";
+        }
+    } catch (Exception $e) { $_SESSION['error_msg'] = "เกิดข้อผิดพลาดของระบบ: " . $e->getMessage(); }
+    header("Location: dashboard.php"); exit();
+}
+
+// =========================================================
+// 🗑️ ระบบลบไฟล์ของ Sales
+// =========================================================
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bulk_delete_sales_files'])) {
+    $task_id = (int)$_POST['task_id'];
+    $engineer_name = $_POST['engineer_name'] ?? 'ไม่ระบุ';
+    $safe_eng_name = str_replace(' ', '_', $engineer_name);
+    
+    if (isset($_POST['selected_files']) && is_array($_POST['selected_files']) && count($_POST['selected_files']) > 0) {
+        $success_count = 0; $fail_count = 0;
+        foreach ($_POST['selected_files'] as $file) {
+            $file_name = basename($file); 
+            $file_path = "../uploads/" . $safe_eng_name . "/task_" . $task_id . "_sales/" . $file_name;
+            if (file_exists($file_path) && unlink($file_path)) { $success_count++; } else { $fail_count++; }
+        }
+
+        if ($success_count > 0) { 
+            $eng_dir = "../uploads/" . $safe_eng_name . "/task_" . $task_id;
+            $has_eng_files = false;
+            if (is_dir($eng_dir)) {
+                $e_files = array_diff(scandir($eng_dir), array('.', '..'));
+                if (count($e_files) > 0) { $has_eng_files = true; }
+            }
+
+            if (!$has_eng_files) {
+                $stmt_update = $pdo->prepare("UPDATE tasks SET status = 'pending' WHERE task_id = :task_id AND status != 'completed' AND status != 'cancelled'");
+                $stmt_update->execute([':task_id' => $task_id]);
+                $_SESSION['success_msg'] = "🗑️ ลบไฟล์สำเร็จ $success_count ไฟล์! (ปรับสถานะเป็นรอดำเนินการ)"; 
+            } else {
+                $_SESSION['success_msg'] = "🗑️ ลบไฟล์สำเร็จ $success_count ไฟล์! (สถานะคงเดิมเนื่องจาก Engineer ส่งงานแล้ว)"; 
+            }
+        } else { 
+            $_SESSION['error_msg'] = "❌ ไม่สามารถลบไฟล์ได้เลย"; 
+        }
+    } else {
+        $_SESSION['error_msg'] = "⚠️ คุณยังไม่ได้เลือกไฟล์ที่ต้องการลบ";
+    }
+    header("Location: dashboard.php"); exit();
+}
+
+// ดึงข้อมูลสรุป
+$sql_summary = "SELECT 
+                    SUM(CASE WHEN status IN ('waiting_sales', 'waiting_customer', 'pending') THEN 1 ELSE 0 END) as action_required,
+                    SUM(CASE WHEN status IN ('in_progress', 'comparing') THEN 1 ELSE 0 END) as in_progress,
+                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
+                FROM tasks WHERE sales_name = :sales_name AND status != 'cancelled'";
+$stmt_summary = $pdo->prepare($sql_summary);
+$stmt_summary->execute(['sales_name' => $sales_name]);
+$summary = $stmt_summary->fetch();
+
+// ดึงงานทั้งหมด
+$sql_tasks = "SELECT t.*, u.name as engineer_name FROM tasks t LEFT JOIN users u ON t.engineer_id = u.id WHERE t.sales_name = :sales_name ORDER BY t.created_at DESC";
+$stmt_tasks = $pdo->prepare($sql_tasks);
+$stmt_tasks->execute(['sales_name' => $sales_name]);
+$tasks = $stmt_tasks->fetchAll();
+
+$page_title = "กระดานงาน Sales - LV TaskHub";
+$base_path = "../"; 
+include '../includes/header.php';
+?>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+    <style>
+        .task-table th, .task-table td { vertical-align: top !important; padding: 1.25rem 1rem !important; }
+        .minimal-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; background: #fff; transition: 0.2s; font-family: inherit; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .minimal-input:hover { border-color: #cbd5e1; }
+        .minimal-input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+        .word-wrap-box { word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
+        .avatar-circle { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--primary-hover)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        .date-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .date-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; width: 24px; text-align: right; flex-shrink: 0; }
+        
+        #loadingOverlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85); z-index: 10000; backdrop-filter: blur(4px); flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 48px; height: 48px; border: 3px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        
+        /* Modal Styles */
+        .modal-file-grid { display: flex; flex-direction: column; gap: 8px; max-height: 45vh; overflow-y: auto; padding-right: 5px; }
+        .modal-file-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; cursor: pointer; }
+        .modal-file-item:hover { border-color: #bae6fd; box-shadow: var(--shadow-sm); background: #f0f9ff; }
+        .modal-file-link { display: flex; align-items: center; gap: 12px; flex-grow: 1; text-decoration: none; overflow: hidden; min-width: 0; }
+        .modal-file-thumbnail, .modal-file-icon { width: 44px; height: 44px; min-width: 44px; max-width: 44px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid #cbd5e1; background: #fff; }
+        .modal-file-icon { display: flex; align-items: center; justify-content: center; background: var(--bg-color); font-size: 1.5rem; }
+        .file-info-box { display: flex; flex-direction: column; overflow: hidden; width: 100%; }
+        .file-name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 10px; }
+        .btn-action-file { width: 36px; height: 36px; min-width: 36px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; cursor: pointer; transition: 0.2s; text-decoration: none; font-size: 1.1rem; }
+        .btn-action-file:hover { background: #0284c7; color: #fff; transform: scale(1.1); box-shadow: var(--shadow-sm); }
+        .btn-delete-action { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+        .btn-delete-action:hover { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
+
+        .btn-save-inline { width: 100%; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; border-radius: 6px; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-save-inline:hover { background: #0284c7; color: white; border-color: #0284c7; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+
+        /* ปรับแต่ง DataTables ให้เข้ากับระบบ */
+        .dataTables_wrapper .dataTables_paginate .paginate_button { padding: 0.4em 0.8em; border-radius: 6px; border: 1px solid transparent; margin-left: 2px; font-size: 0.85rem; font-weight: 500; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { background: #f0f9ff !important; border: 1px solid #bae6fd !important; color: var(--primary-color) !important; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: #f8fafc !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; }
+        .dataTables_wrapper .dataTables_info { color: var(--text-muted); font-size: 0.85rem; padding-top: 1rem; }
+        .bottom { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); background: #f8fafc; }
+        table.dataTable.no-footer { border-bottom: none; }
+        table.dataTable thead th, table.dataTable thead td { border-bottom: 1px solid var(--border-color); }
+    </style>
+
+    <div id="loadingOverlay"><div class="spinner"></div><h3 style="color: var(--primary-color); margin-top: 15px;">กำลังประมวลผล...</h3></div>
+
+    <div class="container">
+        <div class="dashboard-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.6rem; color: var(--text-main);">💼 กระดานงาน (Sales Dashboard)</h2>
+            </div>
+            <div>
+                <a href="create_task.php" class="btn btn-primary" style="box-shadow: 0 4px 10px rgba(37,99,235,0.2); font-weight: 600;">➕ สร้างโปรเจกต์ใหม่</a>
+            </div>
+        </div>
+
+        <?php if(isset($_SESSION['success_msg'])): ?>
+            <div style="background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-sm);"><span style="font-size: 1.2rem;">✅</span> <?php echo $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?></div>
+        <?php endif; ?>
+        <?php if(isset($_SESSION['error_msg'])): ?>
+            <div style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-sm);"><span style="font-size: 1.2rem;">❌</span> <?php echo $_SESSION['error_msg']; unset($_SESSION['error_msg']); ?></div>
+        <?php endif; ?>
+
+        <div class="widget-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+            <div class="widget-card"><div><div class="widget-title">รอดำเนินการ</div><div class="widget-value counter-animate" style="color: #ef4444;"><?php echo intval($summary['action_required']); ?></div></div><div class="widget-icon-box" style="background: #fee2e2; color: #ef4444;">🔴</div></div>
+            <div class="widget-card"><div><div class="widget-title">เอ็นจีเนียกำลังดำเนินการ</div><div class="widget-value counter-animate" style="color: var(--primary-color);"><?php echo intval($summary['in_progress']); ?></div></div><div class="widget-icon-box icon-active">💻</div></div>
+            <div class="widget-card"><div><div class="widget-title">พร้อมส่งลูกค้า (เสร็จสิ้น)</div><div class="widget-value counter-animate" style="color: var(--status-completed);"><?php echo intval($summary['completed']); ?></div></div><div class="widget-icon-box icon-completed">✅</div></div>
+        </div>
+
+        <div class="table-container" style="padding: 0;">
+            <div class="toolbar-box">
+                <h3 class="toolbar-title">📋 <span>ตารางติดตามโปรเจกต์ของคุณ</span></h3>
+                <div class="toolbar-controls" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="customSearchBox" class="minimal-input" placeholder="🔍 ค้นหาลูกค้า, โปรเจกต์..." style="border-radius: 999px; padding: 0.5rem 1.25rem; width: 200px;">
+                    
+                    <select id="statusFilter" class="minimal-input" style="min-width: 160px; border-radius: 999px; cursor: pointer;">
+                        <option value="all" selected>แสดงทั้งหมด</option>
+                        <option value="active">🟢 เฉพาะงานปัจจุบัน</option>
+                        <option value="archived">📁 ประวัติ (เสร็จ/ยกเลิก)</option>
+                    </select>
+                    
+                    <select id="engineerFilter" class="minimal-input" style="min-width: 130px; border-radius: 999px; cursor: pointer;">
+                        <option value="all">👤 ทุกคน</option>
+                        <?php 
+                            $unique_engs = [];
+                            foreach($tasks as $t) { $unique_engs[$t['engineer_name'] ?? 'ไม่ระบุ'] = $t['engineer_name'] ?? 'ไม่ระบุ'; }
+                            foreach($unique_engs as $eng) { echo "<option value=\"".htmlspecialchars($eng)."\">".htmlspecialchars($eng)."</option>"; }
+                        ?>
+                    </select>
                 </div>
-                <div class="flex justify-center">
-                    <div class="w-64 h-64 md:w-80 md:h-80 bg-lightNavy rounded-full"></div>
-                </div>
+            </div>
+            
+            <div style="width: 100%; overflow-x: auto; overflow-y: hidden;">
+                <table id="salesTaskTable" class="task-table" style="width: 100%; min-width: 1300px; margin-bottom: 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">ลูกค้า & โปรเจกต์</th>
+                            <th style="width: 10%; text-align: center;">สถานะงาน</th>
+                            <th style="width: 11%; text-align: center;">ไทม์ไลน์</th>
+                            <th style="width: 10%; text-align: center;">ผู้รับผิดชอบ</th>
+                            <th style="width: 15%; text-align: center;" class="no-sort">ไฟล์ของคุณ / ลิงก์</th>
+                            <th style="width: 15%;" class="no-sort">หมายเหตุ</th>
+                            <th style="width: 17%; text-align: center;" class="no-sort">แฟ้มงาน Engineer</th>
+                            <th style="width: 7%; text-align: center;" class="no-sort">จัดการ</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <?php if(count($tasks) > 0): ?>
+                            <?php foreach($tasks as $task): ?>
+                                <?php 
+                                    $statusClass = 'status-pending'; $statusText = '⚪️ รอดำเนินการ';
+                                    if (in_array($task['status'], ['in_progress', 'comparing'])) { 
+                                        $statusClass = 'status-in-progress'; $statusText = '🔵 กำลังดำเนินการ'; 
+                                    } elseif ($task['status'] == 'completed') { 
+                                        $statusClass = 'status-completed'; $statusText = '🟢 เสร็จสิ้น'; 
+                                    } elseif ($task['status'] == 'cancelled') { 
+                                        $statusClass = 'status-cancelled'; $statusText = '🔴 ยกเลิก'; 
+                                    } elseif (in_array($task['status'], ['waiting_customer', 'waiting_sales', 'pending'])) {
+                                        $statusClass = 'status-pending'; $statusText = '⚪️ รอดำเนินการ'; 
+                                    }
+                                    
+                                    $is_archived = in_array($task['status'], ['completed', 'cancelled']);
+                                    $status_type = $is_archived ? 'archived' : 'active';
+                                    
+                                    $deadline_style = "";
+                                    if (!empty($task['end_date']) && !$is_archived) {
+                                        $today = strtotime(date('Y-m-d')); $end = strtotime($task['end_date']); $diff_days = ($end - $today) / (60 * 60 * 24);
+                                        if ($diff_days < 0) { $deadline_style = "color: #ef4444; font-weight: 600; background-color: #fef2f2; border-color: #fecaca;"; } 
+                                        elseif ($diff_days <= 3) { $deadline_style = "color: #d97706; font-weight: 600; background-color: #fffbeb; border-color: #fed7aa;"; }
+                                    }
+
+                                    $form_id = "edit_form_" . $task['task_id'];
+                                    $eng_name_display = htmlspecialchars($task['engineer_name'] ?? 'ไม่ระบุ');
+                                    $safe_eng_name = str_replace(' ', '_', $eng_name_display);
+                                ?>
+                                <tr class="task-row" data-engineer="<?php echo $eng_name_display; ?>" data-status-type="<?php echo $status_type; ?>">
+                                    
+                                    <td class="word-wrap-box">
+                                        <div style="font-weight: 600; color: var(--text-main); font-size: 1rem; margin-bottom: 2px;"><?php echo htmlspecialchars($task['customer_name']); ?></div>
+                                        <div style="font-size: 0.85rem; color: var(--secondary-color); margin-bottom: 6px;">📁 <?php echo htmlspecialchars($task['project_name']); ?></div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted); display: inline-block; background: var(--bg-color); padding: 2px 6px; border-radius: 4px;">เปิดงาน: <?php echo date('d/m/y', strtotime($task['created_at'])); ?></div>
+                                    </td>
+                                    
+                                    <td style="text-align: center; vertical-align: middle !important;">
+                                        <div class="status-pill <?php echo $statusClass; ?>" style="font-size: 0.85rem; padding: 6px 12px; border-radius: 999px; display: inline-block; font-weight: 600; white-space: nowrap; cursor: not-allowed;" title="ระบบอัปเดตสถานะให้อัตโนมัติ">
+                                            <?php echo $statusText; ?>
+                                        </div>
+                                        <input type="hidden" name="status" value="<?php echo htmlspecialchars($task['status']); ?>" form="<?php echo $form_id; ?>">
+                                    </td>
+                                    
+                                    <td data-sort="<?php echo strtotime($task['created_at']); ?>">
+                                        <div class="date-wrapper"><span class="date-label">เริ่ม</span><input type="date" name="start_date" form="<?php echo $form_id; ?>" value="<?php echo htmlspecialchars($task['start_date'] ?? ''); ?>" class="minimal-input" style="padding: 4px 6px; font-size: 0.8rem;" readonly disabled></div>
+                                        <div class="date-wrapper"><span class="date-label" style="color: #ef4444;">ส่ง</span><input type="date" name="end_date" form="<?php echo $form_id; ?>" value="<?php echo htmlspecialchars($task['end_date'] ?? ''); ?>" class="minimal-input" style="<?php echo $deadline_style; ?> padding: 4px 6px; font-size: 0.8rem;" readonly disabled></div>
+                                    </td>
+                                    
+                                    <td class="text-center word-wrap-box">
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                            <div class="avatar-circle">
+                                                <?php echo mb_substr(trim($eng_name_display), 0, 1, 'UTF-8'); ?>
+                                            </div>
+                                            <span style="font-weight: 600; color: var(--text-main); font-size: 0.9rem;">
+                                                <?php echo $eng_name_display; ?>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                                            <?php 
+                                                $sales_dir = "../uploads/" . $safe_eng_name . "/task_" . $task['task_id'] . "_sales";
+                                                $proj_name_js = htmlspecialchars(addslashes($task['project_name']));
+                                                
+                                                if (is_dir($sales_dir)) {
+                                                    $s_files = array_diff(scandir($sales_dir), array('.', '..'));
+                                                    if (count($s_files) > 0) {
+                                                        echo '<button type="button" class="btn btn-sm" style="width: 100%; justify-content: center; background: #fefce8; color: #a16207; border: 1px solid #fef08a; font-weight: 600; font-size: 0.8rem;" onclick="openFileModal('.$task['task_id'].', \''.$proj_name_js.'\', \'sales\')">📂 ไฟล์ตั้งต้นของคุณ ('.count($s_files).')</button>';
+                                                        
+                                                        echo '<div id="files_hidden_sales_'.$task['task_id'].'" style="display: none;">';
+                                                        echo '<form action="dashboard.php" method="POST" onsubmit="return confirmBulkDelete(this);">';
+                                                        echo '<input type="hidden" name="bulk_delete_sales_files" value="1">';
+                                                        echo '<input type="hidden" name="task_id" value="' . $task['task_id'] . '">';
+                                                        echo '<input type="hidden" name="engineer_name" value="' . htmlspecialchars($eng_name_display) . '">';
+                                                        
+                                                        echo '<div class="bulk-action-bar">';
+                                                        echo '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;"><input type="checkbox" class="custom-checkbox" onclick="toggleAllCheckboxes(this, \'sales_'.$task['task_id'].'\')"> เลือกทั้งหมด</label>';
+                                                        echo '<button type="submit" class="btn-bulk-delete" id="btn_delete_sales_'.$task['task_id'].'" disabled>🗑️ ลบที่เลือก</button>';
+                                                        echo '</div>';
+
+                                                        echo '<div class="modal-file-grid">';
+                                                        foreach($s_files as $f) {
+                                                            $f_path = $sales_dir . '/' . $f;
+                                                            $f_size = formatBytes(filesize($f_path)); $f_date = date('d/m/Y H:i', filemtime($f_path));
+                                                            $is_img = in_array(strtolower(pathinfo($f, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+
+                                                            echo '<label class="modal-file-item" style="cursor: pointer;">';
+                                                            echo '<input type="checkbox" name="selected_files[]" value="'.htmlspecialchars($f).'" class="custom-checkbox file-checkbox-sales_'.$task['task_id'].'" onchange="updateDeleteBtn(\'sales_'.$task['task_id'].'\')">';
+                                                            echo '<a href="' . htmlspecialchars($f_path) . '" target="_blank" class="modal-file-link" onclick="event.stopPropagation();">';
+                                                            if ($is_img) { echo '<img src="' . htmlspecialchars($f_path) . '" class="modal-file-thumbnail" alt="preview">'; } else { echo '<span class="modal-file-icon">'.getFileIcon($f).'</span>'; }
+                                                            echo '<div class="file-info-box"><div class="file-name" title="'.htmlspecialchars($f).'">' . htmlspecialchars($f) . '</div><div class="file-meta"><span>📏 ' . $f_size . '</span><span>🕒 ' . $f_date . '</span></div></div></a>';
+                                                            echo '</label>'; 
+                                                        }
+                                                        echo '</div></form></div>';
+                                                    }
+                                                }
+                                            ?>
+                                            <form action="dashboard.php" method="POST" enctype="multipart/form-data" class="upload-task-form" style="margin:0;">
+                                                <input type="hidden" name="upload_sales_file" value="1">
+                                                <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
+                                                <input type="hidden" name="engineer_name" value="<?php echo htmlspecialchars($eng_name_display); ?>">
+                                                
+                                                <label for="sales_file_<?php echo $task['task_id']; ?>" id="sales_label_<?php echo $task['task_id']; ?>" class="custom-file-upload-btn">📎 <span class="label-text">แนบไฟล์เพิ่ม</span></label>
+                                                <input type="file" id="sales_file_<?php echo $task['task_id']; ?>" name="sales_files[]" multiple required style="display: none;" onchange="updateFileLabel(this, 'sales_label_<?php echo $task['task_id']; ?>')">
+                                                <button type="submit" class="btn btn-primary btn-sm mt-1" style="width: 100%; display:none;" id="sales_submit_<?php echo $task['task_id']; ?>">📤 อัปโหลด</button>
+                                            </form>
+
+                                            <textarea name="link_url" form="<?php echo $form_id; ?>" class="minimal-input minimal-textarea mt-1" placeholder="วางลิงก์ (1 บรรทัด/ลิงก์)" style="min-height: 42px; padding: 4px;"><?php echo htmlspecialchars($task['link_url'] ?? ''); ?></textarea>
+                                            <?php if(!empty(trim($task['link_url']))): ?>
+                                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                <?php
+                                                    $lines = explode("\n", str_replace("\r", "", $task['link_url'])); $link_idx = 1;
+                                                    foreach($lines as $line) {
+                                                        if(!empty(trim($line))) {
+                                                            $href = preg_match("~^(?:f|ht)tps?://~i", trim($line)) ? trim($line) : "http://" . trim($line);
+                                                            echo '<a href="'.htmlspecialchars($href).'" target="_blank" class="btn btn-sm" style="background: #f8fafc; color: var(--primary-color); border: 1px dashed var(--border-color); font-size: 0.7rem; padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">🔗 เปิดลิงก์ '.$link_idx.'</a>';
+                                                            $link_idx++;
+                                                        }
+                                                    }
+                                                ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+
+                                    <td style="font-size: 0.85rem;">
+                                        <textarea name="notes" form="<?php echo $form_id; ?>" class="minimal-input minimal-textarea" placeholder="เพิ่มหมายเหตุการแก้ไข หรือรายละเอียดความคืบหน้า..." style="min-height: 100px;"><?php echo htmlspecialchars($task['notes']); ?></textarea>
+                                    </td>
+
+                                    <td style="padding: 12px;">
+                                        <?php 
+                                            $eng_dir = "../uploads/" . $safe_eng_name . "/task_" . $task['task_id'];
+                                            $has_eng_files = false;
+                                            
+                                            if (is_dir($eng_dir)) {
+                                                $e_files = array_diff(scandir($eng_dir), array('.', '..'));
+                                                if (count($e_files) > 0) {
+                                                    $has_eng_files = true;
+                                                    echo '<button type="button" class="btn btn-sm mb-2" style="width: 100%; justify-content: center; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-weight: 600; font-size: 0.8rem;" onclick="openFileModal('.$task['task_id'].', \''.$proj_name_js.'\', \'eng\')">📂 ดูไฟล์ส่งงาน ('.count($e_files).')</button>';
+                                                    
+                                                    echo '<div id="files_hidden_eng_'.$task['task_id'].'" style="display: none;"><div class="modal-file-grid">';
+                                                    foreach($e_files as $f) {
+                                                        $f_path = $eng_dir . '/' . $f;
+                                                        $f_size = formatBytes(filesize($f_path)); $f_date = date('d/m/Y H:i', filemtime($f_path));
+                                                        $is_img = in_array(strtolower(pathinfo($f, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+
+                                                        echo '<div class="modal-file-item">';
+                                                        echo '<a href="' . htmlspecialchars($f_path) . '" target="_blank" class="modal-file-link" title="คลิกเพื่อเปิดดู">';
+                                                        if ($is_img) { echo '<img src="' . htmlspecialchars($f_path) . '" class="modal-file-thumbnail" alt="preview">'; } else { echo '<span class="modal-file-icon">'.getFileIcon($f).'</span>'; }
+                                                        echo '<div class="file-info-box"><div class="file-name" title="'.htmlspecialchars($f).'">' . htmlspecialchars($f) . '</div><div class="file-meta"><span>📏 ' . $f_size . '</span><span>🕒 ' . $f_date . '</span></div></div></a>';
+                                                        echo '<a href="' . htmlspecialchars($f_path) . '" download class="btn-action-file" title="ดาวน์โหลดไฟล์นี้">⬇️</a></div>'; 
+                                                    }
+                                                    echo '</div></div>';
+                                                }
+                                            }
+                                            if (!$has_eng_files) echo '<span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 8px; text-align: center;">- ยังไม่ส่งงาน -</span>';
+                                        ?>
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        <form id="<?php echo $form_id; ?>" action="update_task.php" method="POST" style="margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                                            <input type="hidden" name="update_task" value="1">
+                                            <input type="hidden" name="task_id" value="<?php echo $task['task_id']; ?>">
+                                            
+                                            <button type="submit" class="btn-save-inline" title="บันทึกข้อมูลและหมายเหตุ">
+                                                💾 อัปเดต
+                                            </button>
+                                            
+                                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.3; margin-top: 8px;">
+                                                อัปเดตล่าสุด:<br>
+                                                <span style="font-weight: 500;"><?php echo date('d/m/y H:i', strtotime($task['updated_at'])); ?></span>
+                                            </div>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr id="noDataRow"><td colspan="8" style="text-align:center;"><div class="empty-state-box"><h4>ไม่มีงาน</h4></div></td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <div id="main-content" class="opacity-0 transition-opacity duration-1000 relative">
-        
-        <div class="absolute top-20 left-[-10%] w-96 h-96 bg-cyan/5 rounded-full blur-3xl animate-blob"></div>
-        <div class="absolute top-[40%] right-[-5%] w-[30rem] h-[30rem] bg-blue-600/5 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-        <div class="absolute bottom-20 left-[10%] w-80 h-80 bg-cyan/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
-
-        <nav class="fixed w-full z-50 glass border-b-0">
-            <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-                <a href="#" class="text-cyan font-bold text-xl tracking-wider text-glow">PORTFOLIO</a>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
-                    <a href="#about" class="hover:text-cyan transition-colors">เกี่ยวกับฉัน</a>
-                    <a href="#skills" class="hover:text-cyan transition-colors">ทักษะ</a>
-                    <a href="#experience" class="hover:text-cyan transition-colors">ประสบการณ์</a>
-                    <a href="#projects" class="hover:text-cyan transition-colors">ผลงาน</a>
-                </div>
-            </div>
-        </nav>
-
-        <section id="hero" class="min-h-screen flex items-center pt-20 relative z-10">
-            <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <p class="text-cyan font-medium mb-4 text-lg">สวัสดีครับ</p>
-                    <h1 class="text-5xl md:text-6xl font-bold text-gray-100 mb-4">อนันตยศ อินทราพงษ์</h1>
-                    
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-400 mb-6 h-10 flex items-center">
-                        <span id="typewriter" class="border-r-2 border-cyan pr-1 text-gray-200"></span>
-                    </h2>
-                    
-                    <p class="text-lg leading-relaxed mb-8 text-slateGray">
-                        นักศึกษาจบใหม่สาย IT ที่มีประสบการณ์ฝึกงานด้าน IT Support สนใจและมีแพสชันด้าน Infrastructure, Network มีประสบการณ์ในการแก้ไขปัญหา Hardware/Software รวมถึงการใช้งาน Synology NAS, Docker และระบบ Automation พื้นฐาน
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="mailto:anantayot.int@gmail.com" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan/10 transition-all duration-300 transform hover:-translate-y-1 shadow-[0_4px_20px_rgba(100,255,218,0.05)]">
-                            <i class="fa-solid fa-envelope mr-2"></i> anantayot.int@gmail.com
-                        </a>
-                        <a href="https://github.com/Anantayot" target="_blank" class="px-6 py-3 border border-cyan text-cyan rounded hover:bg-cyan/10 transition-all duration-300 transform hover:-translate-y-1 shadow-[0_4px_20px_rgba(100,255,218,0.05)]">
-                            <i class="fa-brands fa-github mr-2"></i> GitHub
-                        </a>
-                    </div>
-                </div>
-                <div class="flex justify-center">
-                    <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-cyan overflow-hidden shadow-[0_0_35px_rgba(100,255,218,0.25)] hover:shadow-[0_0_50px_rgba(100,255,218,0.45)] transition-all duration-500 transform hover:scale-105">
-                        <img src="internship-photos/profile.jpeg" alt="Anantayot" class="w-full h-full object-cover transition duration-500">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="py-20 bg-lightNavy/50 relative z-10">
-            <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">01.</span> ประวัติการศึกษา</h2>
-                <div class="glass p-8 rounded-xl border-l-4 border-l-cyan transform hover:-translate-y-1 transition duration-300 hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                    <h3 class="text-xl font-bold text-gray-200">มหาวิทยาลัยมหาสารคาม (Mahasarakham University)</h3>
-                    <p class="text-cyan mt-1 font-medium">พฤษภาคม 2026</p>
-                    <ul class="mt-4 space-y-3 text-gray-400">
-                        <li><i class="fa-solid fa-graduation-cap text-cyan mr-2 w-5 text-center"></i> ปริญญาตรี บริหารธุรกิจบัณฑิต (B.B.A.) สาขาวิชาคอมพิวเตอร์ธุรกิจ คณะการบัญชีและการจัดการ</li>
-                        <li><i class="fa-solid fa-star text-cyan mr-2 w-5 text-center"></i> เกรดเฉลี่ยสะสม (GPA): 3.41</li>
-                        <li class="pt-2"><i class="fa-solid fa-book-open text-cyan mr-2 w-5 text-center"></i> <span class="text-gray-300 font-medium">รายวิชาหลักที่ศึกษา:</span> เรียนเกี่ยวกับด้าน Computer Network, Information Systems Security, Database System และ System Analysis and Design</li>
-                        <li><i class="fa-solid fa-laptop-code text-cyan mr-2 w-5 text-center"></i> <span class="text-gray-300 font-medium">ประสบการณ์ระหว่างเรียน:</span> มีประสบการณ์ด้าน Web Programming, Mobile Application Development และ System Development with Internet of Things (IoT)</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="skills" class="py-20 relative z-10">
-            <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">02.</span> ทักษะความเชี่ยวชาญ</h2>
-                <div class="grid md:grid-cols-2 gap-8">
-                    
-                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
-                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-server text-cyan mr-2 animate-pulse"></i> Infrastructure & Network</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Synology DSM</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">TCP/IP</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">DNS / DHCP / VLAN</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Cisco Packet Tracer</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Linux Basics</span>
-                        </div>
-                    </div>
-
-                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
-                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-headset text-cyan mr-2 animate-pulse"></i> IT Support</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Windows Installation</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Hardware Troubleshooting</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Printer Setup</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Remote Support</span>
-                        </div>
-                    </div>
-
-                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
-                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-robot text-cyan mr-2 animate-pulse"></i> Automation & Tools</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">Docker</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">n8n</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">LINE Messaging API</span>
-                        </div>
-                    </div>
-
-                    <div class="glass p-6 rounded-xl hover:border-cyan/40 transform hover:-translate-y-1 transition duration-300">
-                        <h3 class="text-xl font-bold text-gray-200 mb-4 flex items-center"><i class="fa-solid fa-code text-cyan mr-2 animate-pulse"></i> Web Development</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">PHP</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">MySQL</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">HTML / CSS / JavaScript</span>
-                            <span class="px-3 py-1 bg-navy/60 border border-cyan/20 text-cyan rounded-full text-sm">REST API</span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- Experience & Internship Section -->
-        <section id="experience" class="py-20 relative z-10">
-            <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">03.</span> ประสบการณ์การทำงาน</h2>
-                
-                <div class="glass p-8 rounded-xl mb-8 transform hover:-translate-y-1 transition duration-300 hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-200">IT Support Intern</h3>
-                            <p class="text-lg text-gray-400">LV Automation</p>
-                        </div>
-                        <span class="text-cyan">เมษายน 2026 - พฤษภาคม 2026</span>
-                    </div>
-                    <ul class="space-y-2 text-gray-400 mb-8">
-                        <li><i class="fa-solid fa-check text-cyan mr-2"></i> พัฒนาระบบ "LV Automation Hub" ด้วย PHP, MySQL, HTML, CSS และ JavaScript สำหรับรับแจ้งซ่อม จองห้องประชุม และติดตามงาน</li>
-                        <li><i class="fa-solid fa-check text-cyan mr-2"></i> ดูแลและพัฒนาระบบ Automation ด้วย n8n บน Docker Container เชื่อมต่อ LINE Messaging API</li>
-                        <li><i class="fa-solid fa-check text-cyan mr-2"></i> ให้บริการ IT Support แก้ไขปัญหา Hardware, Software และเน็ตเวิร์กพื้นฐาน</li>
-                    </ul>
-
-                    <h4 class="text-white font-medium mb-4 flex items-center"><i class="fa-solid fa-camera text-cyan mr-2"></i> บรรยากาศการทำงาน (Hands-on Experience)</h4>
-                    
-                    <!-- เปลี่ยน 4 กล่องนี้ให้มี ID สำหรับทำ Slider ภาพฝึกงาน -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
-                            <img id="slider-intern-1" src="internship-photos/1.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Hardware+%26+Network'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
-                                <span class="text-cyan font-medium text-sm">ลงวินโด้</span>
-                            </div>
-                        </div>
-
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
-                            <img id="slider-intern-2" src="internship-photos/2.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=System+Setup'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
-                                <span class="text-cyan font-medium text-sm">ทำเว็บไซต์</span>
-                            </div>
-                        </div>
-
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
-                            <img id="slider-intern-3" src="internship-photos/3.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=User+Support'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
-                                <span class="text-cyan font-medium text-sm">ซ่อมคอมพิวเตอร์</span>
-                            </div>
-                        </div>
-
-                        <div class="relative group overflow-hidden rounded-lg cursor-pointer aspect-square border border-slate-700 bg-navy">
-                            <img id="slider-intern-4" src="internship-photos/4.jpg" onerror="this.src='https://via.placeholder.com/400x400.png?text=Team+Work'" alt="Internship Photo" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center p-2 text-center">
-                                <span class="text-cyan font-medium text-sm">ลง n8n ใน Docker</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- เพิ่มส่วน Certificate ตรงนี้ (เปลี่ยนเป็นแบบรองรับ PDF A4) -->
-                    <div class="mt-12 pt-8 border-t border-slate-700 max-w-3xl mx-auto">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-2">
-                            <h4 class="text-white font-medium flex items-center"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
-                            <a href="certificate/Certificate_LV_Automation_Anantayot.pdf" target="_blank" class="text-sm px-3 py-1 bg-cyan/10 border border-cyan/30 text-cyan rounded hover:bg-cyan hover:text-navy transition-all duration-300">
-                                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดดูไฟล์ PDF เต็มจอ
-                            </a>
-                        </div>
-                        
-                        <!-- ⚠️ แก้ไข 1: ปรับกล่องให้เป็นแนวนอน (ลดความสูงลงเหลือ h-[250px] md:h-[550px]) -->
-                        <div class="relative overflow-hidden rounded-xl border border-slate-700 w-full h-[250px] md:h-[550px] shadow-[0_0_15px_rgba(100,255,218,0.1)] bg-[#323639]">
-                            
-                            <!-- ⚠️ แก้ไข 2: เติม #toolbar=0&navpanes=0&view=Fit ต่อท้ายชื่อไฟล์ -->
-                            <iframe 
-                                src="certificate/Certificate_LV_Automation_Anantayot.pdf#toolbar=0&navpanes=0&view=Fit" 
-                                class="w-full h-full border-0"
-                                title="Certificate LV Automation">
-                            </iframe>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section id="projects" class="py-20 bg-lightNavy/50 relative z-10">
-            <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-gray-100 mb-10 flex items-center"><span class="text-cyan mr-2">04.</span> ผลงานที่โดดเด่น (Projects)</h2>
-                
-                <div class="space-y-12">
-                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                        <div class="w-full aspect-video overflow-hidden bg-navy relative">
-                            <img id="slider-p1" src="image/Mycommiss/MC1.png" alt="E-Commerce Dashboard" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
-                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
-                        </div>
-                        <div class="p-8 flex flex-col justify-center">
-                            <p class="text-cyan mb-2 text-sm font-medium">Project จบ</p>
-                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">E-Commerce & Automated Sales Dashboard</h3>
-                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                ระบบอีคอมเมิร์ซอุปกรณ์ไอทีพร้อมระบบสรุปยอดขายอัตโนมัติด้วยเทคโนโลยี n8n ช่วยประมวลผลคำสั่งซื้อและส่งแจ้งเตือนผ่าน LINE พร้อมบูรณาการ AI สำหรับตรวจสอบสลิปโอนเงิน และแสดงแดชบอร์ดสรุปยอดขายด้วย Looker Studio
-                            </p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">PHP</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">MySQL</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">n8n</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">LINE API</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Looker Studio</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                        <div class="p-8 flex flex-col justify-center order-2 md:order-1">
-                            <p class="text-cyan mb-2 text-sm font-medium">Internal Tool</p>
-                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">LV Automation Hub</h3>
-                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                ระบบศูนย์กลางสำหรับรับแจ้งซ่อมอุปกรณ์ไอที จองห้องประชุม และแจกจ่ายงานสำหรับพนักงานในแผนก IT ทำงานอัตโนมัติด้วย n8n บน Docker เพื่อแจ้งเตือนผ่าน LINE ทันทีที่มีการเปิด Ticket
-                            </p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">PHP</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Docker</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">n8n</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">LINE API</span>
-                            </div>
-                        </div>
-                        <div class="w-full aspect-video overflow-hidden bg-navy order-1 md:order-2 relative">
-                            <img id="slider-p2" src="image/LV-automation-hub/LVhub1.png" alt="LV Automation Hub" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
-                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
-                        </div>
-                    </div>
-
-                    <div class="glass rounded-xl overflow-hidden grid md:grid-cols-2 gap-0 border border-slate-700 hover:border-cyan/50 transition-all duration-300 group hover:shadow-[0_10px_30px_rgba(100,255,218,0.05)]">
-                        <div class="w-full aspect-video overflow-hidden bg-navy relative flex items-center justify-center">
-                            <img id="slider-p3" src="image/LV-automation-tracker/LVtracker1.png" alt="Sale & Engineer Tracking" class="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105">
-                            
-                            <div class="absolute bottom-3 right-3 bg-navy/80 text-cyan text-xs px-2 py-1 rounded border border-cyan/20"><i class="fa-solid fa-images mr-1"></i> Auto Slide</div>
-                        </div>
-                        <div class="p-8 flex flex-col justify-center">
-                            <p class="text-cyan mb-2 text-sm font-medium">กำลังพัฒนา (In Development)</p>
-                            <h3 class="text-2xl font-bold text-gray-200 mb-4 transition-colors group-hover:text-cyan">LV Automation Tracking</h3>
-                            <p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                เว็บแอปพลิเคชันสำหรับเชื่อมโยงการทำงานภายใน LV Automation เพื่อให้ Sale ติดตามการเขียนแบบของ Engineer พร้อมอัปเดตข้อมูลแบบเรียลไทม์ และมีระบบให้ Engineer อัปโหลดไฟล์วาดแบบต่างๆ เข้าระบบได้โดยตรง
-                            </p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">Web App</span>
-                                <span class="text-xs text-slate-300 bg-navy px-2 py-1 rounded border border-slate-700">File Management</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <footer class="py-8 text-center text-gray-500 text-sm border-t border-lightNavy">
-            <p>Designed & Built by Anantayot Intharaphong</p>
-            <p class="mt-2">📞 0903262100 | ✉️ anantayot.int@gmail.com</p>
-        </footer>
-
+    <div id="fileModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-btn" onclick="closeFileModal()">&times;</span>
+            <h3 id="modalTitle" style="margin-top: 0; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; font-size: 1.25rem;"></h3>
+            <div id="modalFileList"></div>
+        </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
     <script>
-        // 1. ระบบจำลอง Skeleton Loader
-        document.addEventListener('DOMContentLoaded', () => {
-            const skeletonScreen = document.getElementById('skeleton-screen');
-            const mainContent = document.getElementById('main-content');
+        // Modal Logic
+        function openFileModal(taskId, projectName, type) {
+            var hiddenId = 'files_hidden_' + type + '_' + taskId;
+            var hiddenDiv = document.getElementById(hiddenId);
+            if (hiddenDiv) { document.getElementById('modalFileList').innerHTML = hiddenDiv.innerHTML; } 
+            else { document.getElementById('modalFileList').innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">ไม่มีไฟล์ในโฟลเดอร์นี้</div>'; }
             
-            setTimeout(() => {
-                if (skeletonScreen && mainContent) {
-                    skeletonScreen.style.opacity = '0';
-                    mainContent.classList.remove('opacity-0');
-                    
-                    // ปลดล็อกการเลื่อนหน้าจอเมื่อโหลดเสร็จ
-                    document.body.classList.remove('overflow-hidden');
-                    
-                    // เคลียร์ Loader ออกจาก DOM เมื่อมองไม่เห็นแล้ว
-                    setTimeout(() => {
-                        skeletonScreen.style.display = 'none';
-                    }, 700);
-                }
-            }, 1500); // แสดงโครงร่างกระพริบหลอกไว้เป็นเวลา 1.5 วินาที
+            var titlePrefix = type === 'sales' ? '<span style="color:#ca8a04;">📂 ไฟล์ตั้งต้นจากคุณ:</span>' : '<span style="color:#059669;">📂 ไฟล์ส่งงานจาก Engineer:</span>';
+            document.getElementById('modalTitle').innerHTML = titlePrefix + ' <br><span style="font-size: 1.1rem; font-weight: 500; color:var(--text-main);">' + projectName + '</span>';
+            
+            document.getElementById('fileModal').classList.add('show');
+            document.body.classList.add('no-scroll');
+        }
+        function closeFileModal() {
+            document.getElementById('fileModal').classList.remove('show');
+            document.body.classList.remove('no-scroll');
+        }
+        window.onclick = function(e) { if (e.target == document.getElementById('fileModal')) closeFileModal(); }
+
+        // Bulk Delete Logic (Sales)
+        function toggleAllCheckboxes(source, groupClass) {
+            const checkboxes = document.getElementById('modalFileList').querySelectorAll('.file-checkbox-' + groupClass);
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateDeleteBtn(groupClass);
+        }
+        function updateDeleteBtn(groupClass) {
+            const checkboxes = document.getElementById('modalFileList').querySelectorAll('.file-checkbox-' + groupClass);
+            const deleteBtn = document.getElementById('modalFileList').querySelector('.btn-bulk-delete'); 
+            const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            if (isAnyChecked) { deleteBtn.removeAttribute('disabled'); } else { deleteBtn.setAttribute('disabled', 'true'); }
+        }
+        function confirmBulkDelete(form) {
+            const checkedBoxes = form.querySelectorAll('input[type="checkbox"][name="selected_files[]"]:checked');
+            if (checkedBoxes.length === 0) return false;
+            if (confirm(`🚨 ยืนยันการลบไฟล์จำนวน ${checkedBoxes.length} ไฟล์?\n(ลบแล้วกู้คืนไม่ได้)`)) { 
+                document.getElementById('loadingOverlay').style.display = 'flex'; 
+                return true; 
+            }
+            return false;
+        }
+
+        // Upload Preview Logic
+        function updateFileLabel(input, labelId) {
+            const label = document.getElementById(labelId);
+            const labelText = label.querySelector('.label-text');
+            const submitBtnId = labelId.replace('sales_label_', 'sales_submit_');
+            const submitBtn = document.getElementById(submitBtnId);
+            
+            if (input.files.length > 6) { alert("❌ อัปโหลดได้สูงสุดครั้งละ 6 ไฟล์"); input.value = ""; labelText.innerText = "แนบไฟล์อ้างอิง"; label.classList.remove('has-file'); submitBtn.style.display = 'none'; return; }
+            if (input.files && input.files.length > 0) {
+                labelText.innerText = input.files.length === 1 ? input.files[0].name : "เลือก " + input.files.length + " ไฟล์";
+                label.classList.add('has-file');
+                submitBtn.style.display = 'block'; 
+            } else {
+                labelText.innerText = "แนบไฟล์อ้างอิง"; label.classList.remove('has-file'); submitBtn.style.display = 'none';
+            }
+        }
+
+        // Global Prevent Double Submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                const btn = this.querySelector('button[type="submit"]');
+                if(btn) { setTimeout(() => btn.setAttribute('disabled', 'true'), 50); }
+            });
         });
 
-        // 2. ระบบ Typewriter Effect
-        const words = ["IT Support", "Network & System Administration", "Automation & Web Development"];
-        let wordIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        const typewriterElement = document.getElementById('typewriter');
+        // 🌟 DataTables Logic 🌟
+        $(document).ready(function() {
+            var table = $('#salesTaskTable').DataTable({
+                "language": { 
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/th.json",
+                    "emptyTable": "<div style='padding: 2.5rem; text-align: center; color: #64748b;'><div style='font-size: 2.5rem; margin-bottom: 10px;'>📭</div><h4>ยังไม่มีโปรเจกต์ในระบบ</h4></div>"
+                },
+                "pageLength": 10,
+                "lengthChange": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "dom": 'rt<"bottom"ip><"clear">',
+                "columnDefs": [ 
+                    { "orderable": false, "targets": [4, 5, 6, 7] } 
+                ],
+                "order": [[ 2, "desc" ]] // จัดเรียงเริ่มต้นที่คอลัมน์ไทม์ไลน์
+            });
 
-        function typeEffect() {
-            if (!typewriterElement) return;
-            
-            const currentWord = words[wordIndex];
-            if (isDeleting) {
-                typewriterElement.textContent = currentWord.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                typewriterElement.textContent = currentWord.substring(0, charIndex + 1);
-                charIndex++;
+            // เชื่อม Search Box กับ DataTables
+            $('#customSearchBox').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            // เชื่อมตัวกรองสถานะและวิศวกร (Filter)
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex, rowData, counter) {
+                    if (settings.nTable.id !== 'salesTaskTable') return true;
+                    
+                    var selectedStatus = $('#statusFilter').val();
+                    var selectedEngineer = $('#engineerFilter').val();
+                    
+                    var rowStatus = $(table.row(dataIndex).node()).attr('data-status-type');
+                    var rowEngineer = $(table.row(dataIndex).node()).attr('data-engineer');
+                    
+                    var matchStatus = (selectedStatus === 'all' || selectedStatus === rowStatus);
+                    var matchEngineer = (selectedEngineer === 'all' || selectedEngineer === rowEngineer);
+                    
+                    return matchStatus && matchEngineer;
+                }
+            );
+
+            $('#statusFilter, #engineerFilter').on('change', function() {
+                table.draw();
+            });
+        });
+
+        // ตัวเลขวิ่งสมูท
+        document.querySelectorAll('.counter-animate').forEach(el => {
+            const target = +el.innerText; let current = 0;
+            if (target > 0) {
+                el.innerText = '0';
+                const updateCounter = () => {
+                    const increment = (target - current) * 0.08; 
+                    if (target - current > 0.5) { current += increment; el.innerText = Math.ceil(current); requestAnimationFrame(updateCounter); } 
+                    else { el.innerText = target; }
+                };
+                setTimeout(updateCounter, 300); 
             }
-
-            let typeSpeed = isDeleting ? 40 : 80;
-
-            if (!isDeleting && charIndex === currentWord.length) {
-                typeSpeed = 2000; // หยุดรอ 2 วินาทีเมื่อพิมพ์เสร็จคำ
-                isDeleting = true;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 400; // ดีเลย์ก่อนเริ่มพิมพ์คำใหม่
-            }
-
-            setTimeout(typeEffect, typeSpeed);
-        }
-        setTimeout(typeEffect, 1000);
-
-        // 3. ฟังก์ชันเปลี่ยนรูปภาพสไลเดอร์อัตโนมัติ
-        function setupAutoSlider(elementId, imageArray, intervalTime) {
-            const imgElement = document.getElementById(elementId);
-            if (!imgElement || imageArray.length === 0) return;
-
-            let currentIndex = 0;
-            setInterval(() => {
-                imgElement.style.opacity = '0.2';
-                setTimeout(() => {
-                    currentIndex = (currentIndex + 1) % imageArray.length;
-                    imgElement.src = imageArray[currentIndex];
-                    imgElement.style.opacity = '1';
-                }, 300);
-            }, intervalTime);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // =====================================
-            // สไลเดอร์โปรเจกต์ 1-3
-            // =====================================
-            const p1Images = [
-                "image/Mycommiss/MC1.png", "image/Mycommiss/MC2.png", "image/Mycommiss/MC3.png",
-                "image/Mycommiss/MC4.png", "image/Mycommiss/MC5.png", "image/Mycommiss/MC6.png",
-                "image/Mycommiss/MC7.png", "image/Mycommiss/MC8.png", "image/Mycommiss/MC9.png",
-                "image/Mycommiss/MC10.png", "image/Mycommiss/MC11.png", "image/Mycommiss/MC12.png",
-                "image/Mycommiss/MC13.png", "image/Mycommiss/MC14.png"
-            ];
-            setupAutoSlider('slider-p1', p1Images, 3500);
-
-            const p2Images = [
-                "image/LV-automation-hub/LVhub1.png", "image/LV-automation-hub/LVhub2.png", "image/LV-automation-hub/LVhub3.png",
-                "image/LV-automation-hub/LVhub4.png", "image/LV-automation-hub/LVhub5.png", "image/LV-automation-hub/LVhub6.png",
-                "image/LV-automation-hub/LVhub7.png", "image/LV-automation-hub/LVhub8.png", "image/LV-automation-hub/LVhub9.png",
-                "image/LV-automation-hub/LVhub10.png", "image/LV-automation-hub/LVhub11.png", "image/LV-automation-hub/LVhub12.png",
-                "image/LV-automation-hub/LVhub13.png", "image/LV-automation-hub/LVhub14.png", "image/LV-automation-hub/LVhub15.png",
-                "image/LV-automation-hub/LVhub16.png", "image/LV-automation-hub/LVhub17.png", "image/LV-automation-hub/LVhub18.png",
-                "image/LV-automation-hub/LVhub19.png", "image/LV-automation-hub/LVhub20.png", "image/LV-automation-hub/LVhub21.png",
-                "image/LV-automation-hub/LVhub22.png"
-            ];
-            setupAutoSlider('slider-p2', p2Images, 3000);
-            
-            const p3Images = [
-                "image/LV-automation-tracker/LVtracker1.png", "image/LV-automation-tracker/LVtracker2.png", "image/LV-automation-tracker/LVtracker3.png",
-                "image/LV-automation-tracker/LVtracker4.png", "image/LV-automation-tracker/LVtracker5.png", "image/LV-automation-tracker/LVtracker6.png"
-            ];
-            setupAutoSlider('slider-p3', p3Images, 3200);
-
-            // =====================================
-            // สไลเดอร์รูปการฝึกงาน (แบ่งเป็น 4 กล่อง)
-            // =====================================
-            // สมมติว่ามีรูปฝึกงานทั้งหมด 6 รูป เราสามารถกระจายรูปใส่กล่องต่างๆ ให้มันสลับกันได้ครับ
-            // คุณสามารถเพิ่มชื่อไฟล์รูป เช่น "internship-photos/5.jpg", "internship-photos/6.jpg" เข้าไปใน Array ด้านล่างได้เลยครับ
-            
-            const internBox1 = ["internship-photos/1.jpg", "internship-photos/5.jpg"];
-            const internBox2 = ["internship-photos/2.jpg", "internship-photos/6.jpg"];
-            const internBox3 = ["internship-photos/3.jpg", "internship-photos/1.jpg"]; 
-            const internBox4 = ["internship-photos/4.jpg", "internship-photos/2.jpg"]; 
-
-            // ตั้งเวลาสลับรูปให้เหลื่อมกัน (3วิ, 3.2วิ, 3.4วิ, 3.6วิ) เว็บจะดูขยับแบบลื่นไหล ไม่พร้อมกันจนเกินไป
-            setupAutoSlider('slider-intern-1', internBox1, 3000);
-            setupAutoSlider('slider-intern-2', internBox2, 3200);
-            setupAutoSlider('slider-intern-3', internBox3, 3400);
-            setupAutoSlider('slider-intern-4', internBox4, 3600);
         });
     </script>
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>
