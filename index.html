@@ -228,11 +228,23 @@
                         </div>
                     </div>
 
-                    <!-- เพิ่มส่วน Certificate ตรงนี้ -->
-                    <h4 class="text-white font-medium mt-12 mb-4 flex items-center pt-8 border-t border-slate-700"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
-                    <div class="relative group overflow-hidden rounded-xl border border-slate-700 max-w-3xl mx-auto shadow-[0_0_15px_rgba(100,255,218,0.1)]">
-                        <!-- หมายเหตุ: ไฟล์รูปมักจะมีนามสกุล .jpg หรือ .png อย่าลืมเช็กในโฟลเดอร์ให้ตรงนะครับ -->
-                        <img src="certificate/Certificate LV Automation Anantayot.jpg" alt="Certificate LV Automation" class="w-full h-auto object-contain transition duration-500 group-hover:scale-105" onerror="this.src='https://via.placeholder.com/800x600.png?text=Certificate+Not+Found'">
+                    <!-- เพิ่มส่วน Certificate ตรงนี้ (เปลี่ยนเป็นแบบรองรับ PDF A4) -->
+                    <div class="mt-12 pt-8 border-t border-slate-700 max-w-3xl mx-auto">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-2">
+                            <h4 class="text-white font-medium flex items-center"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
+                            <a href="certificate/Certificate LV Automation Anantayot.pdf" target="_blank" class="text-sm px-3 py-1 bg-cyan/10 border border-cyan/30 text-cyan rounded hover:bg-cyan hover:text-navy transition-all duration-300">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดดูไฟล์ PDF เต็มจอ
+                            </a>
+                        </div>
+                        
+                        <!-- กรอบสำหรับโชว์ PDF (กำหนดความสูงให้เหมาะกับสัดส่วน A4) -->
+                        <div class="relative overflow-hidden rounded-xl border border-slate-700 w-full h-[500px] md:h-[800px] shadow-[0_0_15px_rgba(100,255,218,0.1)] bg-white">
+                            <iframe 
+                                src="certificate/Certificate LV Automation Anantayot.pdf" 
+                                class="w-full h-full border-0"
+                                title="Certificate LV Automation">
+                            </iframe>
+                        </div>
                     </div>
 
                 </div>
