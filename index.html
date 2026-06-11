@@ -226,27 +226,17 @@
                         </div>
                     </div>
 
-                    <!-- แก้ไขส่วน Certificate ให้แสดงเป็น PNG แต่ลิงก์ไปหน้า PDF -->
+                    <!-- แก้ไขส่วน Certificate เอาเอฟเฟกต์ลิงก์และลูกเล่นเมาส์ชี้ออก -->
                     <div class="mt-12 pt-8 border-t border-slate-700 max-w-3xl mx-auto">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-2">
-                            <h4 class="text-white font-medium flex items-center"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Internship)</h4>
+                            <h4 class="text-white font-medium flex items-center"><i class="fa-solid fa-award text-cyan mr-2"></i> ใบรับรองการผ่านงาน (Certificate of Completion)</h4>
                             <a href="certificate/Certificate_LV_Automation_Anantayot.pdf" target="_blank" class="text-sm px-3 py-1 bg-cyan/10 border border-cyan/30 text-cyan rounded hover:bg-cyan hover:text-navy transition-all duration-300">
                                 <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดดูไฟล์ PDF เต็มจอ
                             </a>
                         </div>
                         
-                        <div class="relative overflow-hidden rounded-xl border border-slate-700 w-full shadow-[0_0_15px_rgba(100,255,218,0.1)] group cursor-pointer bg-white">
-                            <!-- ลิงก์หุ้มภาพ PNG ไว้ พอกดแล้วจะเปิดหน้า PDF ใหม่ขึ้นมา -->
-                            <a href="certificate/Certificate_LV_Automation_Anantayot.pdf" target="_blank" class="block w-full h-full">
-                                <img src="certificate/Certificate_LV_Automation_Anantayot.png" alt="Certificate LV Automation" class="w-full h-auto object-contain transition duration-500 group-hover:scale-105" onerror="this.src='https://via.placeholder.com/800x560.png?text=Certificate+Image+Not+Found'">
-                                
-                                <!-- Overlay เวลานำเมาส์ไปชี้ที่รูป -->
-                                <div class="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                                    <span class="text-cyan font-medium text-lg px-4 py-2 bg-navy/80 rounded-lg border border-cyan/50 backdrop-blur-sm">
-                                        <i class="fa-solid fa-magnifying-glass mr-2"></i>คลิกเพื่อดูไฟล์ PDF
-                                    </span>
-                                </div>
-                            </a>
+                        <div class="relative overflow-hidden rounded-xl border border-slate-700 w-full shadow-[0_0_15px_rgba(100,255,218,0.1)] bg-white">
+                            <img src="certificate/Certificate_LV_Automation_Anantayot.png" alt="Certificate LV Automation" class="w-full h-auto object-contain" onerror="this.src='https://via.placeholder.com/800x560.png?text=Certificate+Image+Not+Found'">
                         </div>
                     </div>
 
@@ -402,7 +392,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // สไลเดอร์ Project 1
+            // สไลเดอร์โปรเจกต์ 1
             const p1Images = [
                 "image/Mycommiss/MC1.png", "image/Mycommiss/MC2.png", "image/Mycommiss/MC3.png",
                 "image/Mycommiss/MC4.png", "image/Mycommiss/MC5.png", "image/Mycommiss/MC6.png",
@@ -412,7 +402,7 @@
             ];
             setupAutoSlider('slider-p1', p1Images, 3500);
 
-            // สไลเดอร์ Project 2
+            // สไลเดอร์โปรเจกต์ 2
             const p2Images = [
                 "image/LV-automation-hub/LVhub1.png", "image/LV-automation-hub/LVhub2.png", "image/LV-automation-hub/LVhub3.png",
                 "image/LV-automation-hub/LVhub4.png", "image/LV-automation-hub/LVhub5.png", "image/LV-automation-hub/LVhub6.png",
@@ -425,7 +415,7 @@
             ];
             setupAutoSlider('slider-p2', p2Images, 3000);
             
-            // สไลเดอร์ Project 3
+            // สไลเดอร์โปรเจกต์ 3
             const p3Images = [
                 "image/LV-automation-tracker/LVtracker1.png", "image/LV-automation-tracker/LVtracker2.png", "image/LV-automation-tracker/LVtracker3.png",
                 "image/LV-automation-tracker/LVtracker4.png", "image/LV-automation-tracker/LVtracker5.png", "image/LV-automation-tracker/LVtracker6.png"
@@ -435,6 +425,3 @@
     </script>
 </body>
 </html>
-จะเอาไปโฮทของตัวเอง ต้องรันในไหน apacheได้ไหม
-
-There is a file you can reference named "image_0d603a.png". Refer to this file by its name verbatim.
